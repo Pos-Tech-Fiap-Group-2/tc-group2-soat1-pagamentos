@@ -1,0 +1,47 @@
+version: '3'
+services:
+  api:
+    container_name: tech-challenge-api
+    build:
+      context: .
+      dockerfile: .docker/Dockerfile
+      # Argumento a ser passado para o Dockerfile indicando o nome do artefato para cópia.
+      args: 
+        JAR_FILE: tech-challenge-group2-soat1.jar
+    # Adicionei como se fosse um "healthcheck". Se trata de um script que fica pingando o serviço e 
+    # "prende" o start do container até que tenha uma resposta dentro do tempo parametrizado. 
+    # Caso contrário, retorna um signal code de erro e o container encerra a execução.
+    # No meu ambiente, estava ocorrendo que o MySQL estava com a porta disponível depois do container ter iniciado a daemon.
+    # Isso acarretava do container da API iniciar sem estar disponível o serviço na porta 3306 no container do DB.
+    command: ["/wait-for-it.sh", "tech-challenge-db:3306", "-t", "60", "--", "java", "-jar", "/app/api.jar"]
+    restart: unless-stopped
+    environment:
+      DB_HOST: "tech-challenge-db:3306"
+      DB_USER: root
+      DB_PASSWORD: root
+    ports:
+      - "8080:8080"
+    networks:
+      - tech-challenge-network
+    depends_on:
+      - db
+
+  db:
+    container_name: tech-challenge-db
+    image: mysql:8.0.33
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: tech_challenge
+      MYSQL_PASSWORD: root
+      MYSQL_ROOT_PASSWORD: root
+    volumes:
+      - .docker/mysql/data:/var/lib/mysql
+      - .docker/mysql/my.cnf:/etc/mysql/my.cnf
+    ports:
+      - "3306:3306"
+    networks:
+      - tech-challenge-network
+
+networks:
+    tech-challenge-network:
+        driver: bridge
