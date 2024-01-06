@@ -66,12 +66,7 @@ public class SpringFoxConfig implements WebMvcConfigurer {
 				// Configuração de tags para apresentação nas sections do Swagger
 				// O Primeiro argumento do construtor do objeto definido aqui deve
 				// coincidir com o mesmo nome que definido no controller no atributo tags da anotação @Api.                                         
-				.tags(new Tag("Clientes", "Gestão de clientes"),
-						new Tag("Categorias", "Gestão de categorias"),
-						new Tag("Pagamentos", "Gestão dos tipos de pagamentos"),
-						new Tag("Pedidos", "Gestão dos pedidos"),
-						new Tag("Produtos", "Gestão dos produtos disponíveis na plataforma"),
-						new Tag("Checkout", "Controle de checkout de pedidos"));
+				.tags(new Tag("Pagamentos", "Gestão dos tipos de pagamentos"));
 	}
 	
 	/**

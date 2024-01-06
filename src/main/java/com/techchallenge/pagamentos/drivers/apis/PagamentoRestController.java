@@ -19,7 +19,6 @@ import com.techchallenge.pagamentos.adapter.driver.model.TipoPagamentoModel;
 import com.techchallenge.pagamentos.adapter.driver.model.input.EventoPagamentoInput;
 import com.techchallenge.pagamentos.adapter.driver.model.input.TipoPagamentoInput;
 import com.techchallenge.pagamentos.adapter.dto.pagamentos.PagamentoPixResponseDTO;
-import com.techchallenge.pagamentos.adapter.dto.pagamentos.PagamentoResponseDTO;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;

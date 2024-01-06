@@ -8,8 +8,7 @@ import org.springframework.stereotype.Service;
 import com.techchallenge.pagamentos.adapter.dto.pagamentos.PagamentoPixResponseDTO;
 import com.techchallenge.pagamentos.adapter.dto.pagamentos.PagamentoResponseDTO;
 import com.techchallenge.pagamentos.adapter.gateways.PagamentoGateway;
-import com.techchallenge.pagamentos.adapter.gateways.PedidoGateway;
-import com.techchallenge.pagamentos.core.domain.entities.*;
+import com.techchallenge.pagamentos.core.domain.entities.TipoPagamento;
 
 @Service
 public class PagamentoUseCase {
