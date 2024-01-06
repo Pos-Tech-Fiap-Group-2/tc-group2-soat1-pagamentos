@@ -1,10 +1,11 @@
 package com.techchallenge.pagamentos.adapter.dto.pagamentos;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-//import com.techchallenge.pagamentos.adapter.dto.cliente.ClienteDTO;
+import java.math.BigDecimal;
 
 import javax.validation.constraints.NotNull;
-import java.math.BigDecimal;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.techchallenge.pagamentos.adapter.dto.cliente.ClienteDTO;
 
 public class PagamentoPixDTO {
     @NotNull
@@ -14,8 +15,8 @@ public class PagamentoPixDTO {
     @JsonProperty("description")
     private String descricao;
 
-//    @NotNull
-//    private ClienteDTO cliente;
+    @NotNull
+    private ClienteDTO cliente;
 
     public PagamentoPixDTO() {
     }
@@ -36,11 +37,11 @@ public class PagamentoPixDTO {
         this.descricao = descricao;
     }
 
-//    public ClienteDTO getCliente() {
-//        return cliente;
-//    }
-//
-//    public void setCliente(ClienteDTO cliente) {
-//        this.cliente = cliente;
-//    }
+    public ClienteDTO getCliente() {
+        return cliente;
+    }
+
+    public void setCliente(ClienteDTO cliente) {
+        this.cliente = cliente;
+    }
 }

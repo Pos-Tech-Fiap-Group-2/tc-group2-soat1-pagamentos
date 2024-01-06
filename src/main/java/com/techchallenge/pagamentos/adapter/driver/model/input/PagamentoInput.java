@@ -1,13 +1,14 @@
-package com.techchallenge.pagamentos.core.domain.entities;
+package com.techchallenge.pagamentos.adapter.driver.model.input;
 
 import java.math.BigDecimal;
 
-public class Pagamento {
-	
+public class PagamentoInput {
+
 	private Long tipoPagamentoId;
 	private Long pedidoId;
 	private BigDecimal valor;
-	private Cliente cliente;
+	
+	private ClienteInput cliente;
 
 	public Long getTipoPagamentoId() {
 		return tipoPagamentoId;
@@ -33,11 +34,12 @@ public class Pagamento {
 		this.valor = valor;
 	}
 
-	public Cliente getCliente() {
+	public ClienteInput getCliente() {
 		return cliente;
 	}
 
-	public void setCliente(Cliente cliente) {
+	public void setCliente(ClienteInput cliente) {
 		this.cliente = cliente;
 	}
+
 }

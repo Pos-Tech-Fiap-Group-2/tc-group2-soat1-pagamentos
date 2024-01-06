@@ -6,9 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -17,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.techchallenge.pagamentos.adapter.controllers.PagamentoController;
 import com.techchallenge.pagamentos.adapter.driver.model.TipoPagamentoModel;
 import com.techchallenge.pagamentos.adapter.driver.model.input.EventoPagamentoInput;
-import com.techchallenge.pagamentos.adapter.driver.model.input.TipoPagamentoInput;
+import com.techchallenge.pagamentos.adapter.driver.model.input.PagamentoInput;
 import com.techchallenge.pagamentos.adapter.dto.pagamentos.PagamentoPixResponseDTO;
 
 import io.swagger.annotations.Api;
@@ -38,10 +36,10 @@ public class PagamentoRestController {
 			@ApiResponse(code = 201, message = "Pagamento registrado com sucesso"),
 			@ApiResponse(code = 404, message = "Caso o pedido ou pagamento com o ID informado não exista")
 			})
-	@PutMapping("/pedidos/{pedidoId}")
+	@PostMapping
 	@ResponseStatus(HttpStatus.OK)
-	public PagamentoPixResponseDTO realizarPagamento(@PathVariable Long pedidoId, @RequestBody TipoPagamentoInput tipoPagamentoInput) {
-		return controller.realizarPagamento(pedidoId, tipoPagamentoInput);
+	public PagamentoPixResponseDTO realizarPagamento(@RequestBody PagamentoInput pagamentoInput) {
+		return controller.realizarPagamento(pagamentoInput);
 	}
 	
 	@ApiOperation("Consultar tipos de pagamentos aceitos na plataforma")

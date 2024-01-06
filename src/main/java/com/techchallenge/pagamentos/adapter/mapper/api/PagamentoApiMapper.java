@@ -7,11 +7,11 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.techchallenge.pagamentos.adapter.driver.model.TipoPagamentoModel;
+import com.techchallenge.pagamentos.adapter.driver.model.PagamentoModel;
 import com.techchallenge.pagamentos.adapter.driver.model.input.EventoPagamentoInput;
-import com.techchallenge.pagamentos.adapter.driver.model.input.TipoPagamentoInput;
+import com.techchallenge.pagamentos.adapter.driver.model.input.PagamentoInput;
 import com.techchallenge.pagamentos.core.domain.entities.EventoPagamento;
-import com.techchallenge.pagamentos.core.domain.entities.TipoPagamento;
+import com.techchallenge.pagamentos.core.domain.entities.Pagamento;
 
 @Component
 public class PagamentoApiMapper {
@@ -19,13 +19,13 @@ public class PagamentoApiMapper {
     @Autowired
     private ModelMapper mapper;
 
-    public TipoPagamento toDomainObject(TipoPagamentoInput input) {
-        return mapper.map(input, TipoPagamento.class);
+    public Pagamento toDomainObject(PagamentoInput input) {
+        return mapper.map(input, Pagamento.class);
     }
 
-    public Collection<TipoPagamentoModel> toCollectionModel(Collection<TipoPagamento> tipoPagamento) {
-        return tipoPagamento.stream()
-                .map(c -> mapper.map(c, TipoPagamentoModel.class))
+    public Collection<PagamentoModel> toCollectionModel(Collection<Pagamento> pagamentos) {
+        return pagamentos.stream()
+                .map(c -> mapper.map(c, PagamentoModel.class))
                 .collect(Collectors.toList());
     }
 
