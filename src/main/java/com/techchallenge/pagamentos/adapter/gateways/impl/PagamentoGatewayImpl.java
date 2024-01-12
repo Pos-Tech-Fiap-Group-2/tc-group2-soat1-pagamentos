@@ -2,6 +2,7 @@ package com.techchallenge.pagamentos.adapter.gateways.impl;
 
 import java.util.List;
 
+import com.techchallenge.pagamentos.adapter.external.producao.ProducaoAPI;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -38,6 +39,9 @@ public class PagamentoGatewayImpl implements PagamentoGateway {
 
 	@Autowired
 	private MercadoPagoAPI mercadoPagoAPI;
+
+	@Autowired
+	private ProducaoAPI producaoAPI;
 	
 	public PagamentoPixResponseDTO efetuarPagamento(Pagamento pagamento) {
 		Long id = pagamento.getTipoPagamentoId();
@@ -79,6 +83,11 @@ public class PagamentoGatewayImpl implements PagamentoGateway {
 
 		// FIXME: Verificar a melhor forma de tratar o id de pagamento externo nesse modelo.
 //		pedidoGateway.atualizarPaymentId(pedidoId, pagamentoPixResponseDTO.getId());
+
+		// endpoint de adicionar a fila
+		producaoAPI.adicionarPedidoFilaProducao(pagamento.getPedidoId().toString());
+
+		//endpoint de atualizar status do pedido
 
 		return pagamentoPixResponseDTO;
 	}
