@@ -28,4 +28,8 @@ public class PagamentoUseCase {
 	public List<TipoPagamento> listar() {
 		return gateway.listar();
 	}
+
+	public Pagamento consultaStatusPagamento(Long pedidoId) {
+		return gateway.consultarStatusPagamento(pedidoId);
+	}
 }

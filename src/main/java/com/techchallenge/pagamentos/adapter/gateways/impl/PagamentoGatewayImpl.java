@@ -2,24 +2,22 @@ package com.techchallenge.pagamentos.adapter.gateways.impl;
 
 import java.util.List;
 
+import com.techchallenge.pagamentos.adapter.external.producao.PedidoStatusRequest;
 import com.techchallenge.pagamentos.adapter.external.producao.ProducaoAPI;
+import com.techchallenge.pagamentos.adapter.mapper.business.PagamentoBusinessMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.techchallenge.pagamentos.adapter.dto.cliente.ClienteDTO;
 import com.techchallenge.pagamentos.adapter.dto.cliente.ClienteDocumentoDTO;
-//import com.techchallenge.pagamentos.adapter.dto.cliente.ClienteDTO;
-//import com.techchallenge.pagamentos.adapter.dto.cliente.ClienteDocumentoDTO;
 import com.techchallenge.pagamentos.adapter.dto.pagamentos.PagamentoPixDTO;
 import com.techchallenge.pagamentos.adapter.dto.pagamentos.PagamentoPixResponseDTO;
 import com.techchallenge.pagamentos.adapter.dto.pagamentos.PagamentoResponseDTO;
 import com.techchallenge.pagamentos.adapter.external.mercadopago.MercadoPagoAPI;
 import com.techchallenge.pagamentos.adapter.gateways.PagamentoGateway;
-//import com.techchallenge.pagamentos.adapter.gateways.PedidoGateway;
 import com.techchallenge.pagamentos.adapter.mapper.business.TipoPagamentoBusinessMapper;
 import com.techchallenge.pagamentos.core.domain.entities.Pagamento;
 import com.techchallenge.pagamentos.core.domain.entities.StatusPagamento;
-//import com.techchallenge.pagamentos.core.domain.entities.StatusPedido;
 import com.techchallenge.pagamentos.core.domain.entities.TipoPagamento;
 import com.techchallenge.pagamentos.core.domain.exception.EntidadeNaoEncontradaException;
 import com.techchallenge.pagamentos.drivers.db.entities.PagamentoEntity;
@@ -29,42 +27,36 @@ import com.techchallenge.pagamentos.drivers.db.repositories.TipoPagamentoReposit
 
 @Component
 public class PagamentoGatewayImpl implements PagamentoGateway {
-	
+
 	@Autowired
 	private PagamentoRepository pagamentoRepository;
 	@Autowired
 	private TipoPagamentoRepository tipoPagamentoRepository;
 	@Autowired
 	private TipoPagamentoBusinessMapper businessMapper;
+	@Autowired
+	private PagamentoBusinessMapper pagamentoBusinessMapper;
 
 	@Autowired
 	private MercadoPagoAPI mercadoPagoAPI;
 
 	@Autowired
 	private ProducaoAPI producaoAPI;
-	
+
 	public PagamentoPixResponseDTO efetuarPagamento(Pagamento pagamento) {
 		Long id = pagamento.getTipoPagamentoId();
-		
+
 		TipoPagamentoEntity entity = tipoPagamentoRepository.findById(id).orElseThrow(() -> new EntidadeNaoEncontradaException(
                 String.format("Não existe um cadastro de tipo de pagamento com código %d", id)));
-		
+
 		PagamentoEntity pagamentoEntity = new PagamentoEntity();
 		pagamentoEntity.setTipoPagamento(entity);
 		pagamentoEntity.setStatus(StatusPagamento.PROCESSAMENTO);
 		pagamentoEntity.setIdPedido(pagamento.getPedidoId());
 		pagamentoEntity.setValor(pagamento.getValor());
-		
+
 		pagamentoRepository.save(pagamentoEntity);
-		
-		// FIXME: A API de pedido deverá manter o estado atualizado do pedido.
-//		pedidoGateway.atualizarTipoPagamento(pedidoId, businessMapper.toModel(entity));
-//
-//		Pedido pedido = pedidoGateway.buscarPedidoPorId(pedidoId);
-//		
-//		pedido.setStatusPagamento(StatusPagamento.PROCESSAMENTO);
-//		pedidoGateway.atualizarStatusPagamento(id, StatusPagamento.PROCESSAMENTO);
-		
+
 		ClienteDocumentoDTO clienteDocumentoDTO = new ClienteDocumentoDTO();
 		clienteDocumentoDTO.setTipo("CPF");
 		clienteDocumentoDTO.setNumero(pagamento.getCliente().getCpf().toString());
@@ -80,33 +72,38 @@ public class PagamentoGatewayImpl implements PagamentoGateway {
 		pagamentoPixDTO.setDescricao("Pagamento do pedido " + pagamento.getPedidoId());
 
 		PagamentoPixResponseDTO pagamentoPixResponseDTO = mercadoPagoAPI.efetuarPagamentoViaPix(pagamentoPixDTO);
-
-		// FIXME: Verificar a melhor forma de tratar o id de pagamento externo nesse modelo.
-//		pedidoGateway.atualizarPaymentId(pedidoId, pagamentoPixResponseDTO.getId());
-
-		// endpoint de adicionar a fila
-		producaoAPI.adicionarPedidoFilaProducao(pagamento.getPedidoId().toString());
-
-		//endpoint de atualizar status do pedido
+		pagamentoEntity.setIdPagamentoExterno(pagamentoPixResponseDTO.getId());
+		pagamentoRepository.save(pagamentoEntity);
 
 		return pagamentoPixResponseDTO;
 	}
-	
+
 	public PagamentoResponseDTO consultarPagamento(Long paymentId) {
-		PagamentoResponseDTO pagamentoResponseDTO= mercadoPagoAPI.consultarPagamento(paymentId);
+		PagamentoEntity pagamentoEntity = pagamentoRepository.findByIdPagamentoExterno(paymentId);
+		PagamentoResponseDTO pagamentoResponseDTO = mercadoPagoAPI.consultarPagamento(paymentId);
 
 		if (pagamentoResponseDTO.getStatus().equals("approved")) {
-			// FIXME: Atualização do estado do pedido com base na condição de pagamento deverá ocorrer pela API de pedidos.
-//			Pedido pedido = pedidoGateway.buscarPedidoPorPaymentId(paymentId);
-
-//			pedidoGateway.atualizarStatusPagamento(pedido.getId(), StatusPagamento.APROVADO);
-//			pedidoGateway.atualizarStatusDoPedido(pedido, StatusPedido.PREPARACAO);
+			pagamentoEntity.setStatus(StatusPagamento.APROVADO);
+			pagamentoRepository.save(pagamentoEntity);
+			producaoAPI.adicionarPedidoFilaProducao(pagamentoEntity.getIdPedido().toString());
+		} else {
+			pagamentoEntity.setStatus(StatusPagamento.RECUSADO);
+			pagamentoRepository.save(pagamentoEntity);
+			PedidoStatusRequest request = new PedidoStatusRequest();
+			request.setStatus("CANCELADO");
+			producaoAPI.atualizarStatusPedidoProducao(pagamentoEntity.getIdPedido().toString(), request);
 		}
 
 		return pagamentoResponseDTO;
 	}
-	
+
 	public List<TipoPagamento> listar() {
 		return businessMapper.toCollectionModel(tipoPagamentoRepository.findAll());
+	}
+
+	public Pagamento consultarStatusPagamento(Long pedidoId) {
+		PagamentoEntity entity = pagamentoRepository.findByIdPedido(pedidoId);
+		return pagamentoBusinessMapper.toModel(entity);
+
 	}
 }

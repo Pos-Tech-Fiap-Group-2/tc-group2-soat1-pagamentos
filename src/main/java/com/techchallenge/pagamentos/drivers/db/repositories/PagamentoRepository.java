@@ -7,5 +7,7 @@ import com.techchallenge.pagamentos.drivers.db.entities.PagamentoPKEntity;
 
 @Repository
 public interface PagamentoRepository extends JpaRepository<PagamentoEntity, PagamentoPKEntity> {
-	
+
+    PagamentoEntity findByIdPagamentoExterno(Long paymentId);
+    PagamentoEntity findByIdPedido(Long pedidoId);
 }

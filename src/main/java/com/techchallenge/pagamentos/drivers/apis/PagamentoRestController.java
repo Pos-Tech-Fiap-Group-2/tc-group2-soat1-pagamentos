@@ -5,12 +5,7 @@ import java.util.Collection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.techchallenge.pagamentos.adapter.controllers.PagamentoController;
 import com.techchallenge.pagamentos.adapter.driver.model.TipoPagamentoModel;
@@ -62,5 +57,16 @@ public class PagamentoRestController {
 	@ResponseStatus(HttpStatus.OK)
 	public void confirmarPagamento(@RequestBody EventoPagamentoInput eventoPagamentoInput) {
 		controller.confirmarPagamento(eventoPagamentoInput);
+	}
+
+	@ApiOperation("Consultar status do pagamento")
+	@ApiResponses({
+			@ApiResponse(code = 201, message = "Consulta efetuada com sucesso"),
+			@ApiResponse(code = 404, message = "Caso não exista registros na plataforma")
+	})
+	@GetMapping("/status/pedidos/{pedidoId}")
+	@ResponseStatus(HttpStatus.OK)
+	public String consultarStatusPagamento(@PathVariable Long pedidoId) {
+		return controller.consultarStatusPagamento(pedidoId);
 	}
 }

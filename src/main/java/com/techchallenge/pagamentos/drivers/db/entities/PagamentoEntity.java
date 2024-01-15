@@ -24,20 +24,24 @@ public class PagamentoEntity {
 	@Column(name = "pagamento_id")
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long idPagamento;
-    
+
 	@Id
     @Column(name = "pedido_id")
 	private Long idPedido;
-    
+
+	@Id
+	@Column(name = "pagamento_id_externo")
+	private Long idPagamentoExterno;
+
 	@Enumerated(EnumType.STRING)
 	private StatusPagamento status;
-    
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="tipo_pagamento_id", nullable = true)
 	private TipoPagamentoEntity tipoPagamento;
-	
+
 	private BigDecimal valor;
-	
+
 	public BigDecimal getValor() {
 		return valor;
 	}
@@ -45,7 +49,7 @@ public class PagamentoEntity {
 	public void setValor(BigDecimal valor) {
 		this.valor = valor;
 	}
-	
+
 	public StatusPagamento getStatus() {
 		return status;
 	}
@@ -53,7 +57,7 @@ public class PagamentoEntity {
 	public void setStatus(StatusPagamento status) {
 		this.status = status;
 	}
-	
+
 	public TipoPagamentoEntity getTipoPagamento() {
 		return tipoPagamento;
 	}
@@ -61,7 +65,7 @@ public class PagamentoEntity {
 	public void setTipoPagamento(TipoPagamentoEntity tipoPagamento) {
 		this.tipoPagamento = tipoPagamento;
 	}
-	
+
 	public void setIdPagamento(Long idPagamento) {
 		this.idPagamento = idPagamento;
 	}
@@ -77,4 +81,8 @@ public class PagamentoEntity {
 	public void setIdPedido(Long idPedido) {
 		this.idPedido = idPedido;
 	}
+
+    public Long getIdPagamentoExterno() { return idPagamentoExterno; }
+
+    public void setIdPagamentoExterno(Long idPagamentoExterno) { this.idPagamentoExterno = idPagamentoExterno; }
 }

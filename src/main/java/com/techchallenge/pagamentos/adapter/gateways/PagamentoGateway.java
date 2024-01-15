@@ -13,4 +13,5 @@ public interface PagamentoGateway {
 	PagamentoPixResponseDTO efetuarPagamento(Pagamento pagamento);
 	PagamentoResponseDTO consultarPagamento(Long paymentId);
 	List<TipoPagamento> listar();
+	Pagamento consultarStatusPagamento(Long pedidoId);
 }

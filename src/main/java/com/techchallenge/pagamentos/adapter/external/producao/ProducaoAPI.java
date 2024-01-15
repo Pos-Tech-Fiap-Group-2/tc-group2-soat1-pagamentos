@@ -8,7 +8,7 @@ public interface ProducaoAPI {
     @PostMapping(value = "/api/producao/{pedidoId}/adicionar")
     public void adicionarPedidoFilaProducao(@PathVariable String pedidoId);
 
-    @PutMapping(value = "/api/producao/{pedidoId}/status")
+    @PutMapping(value = "/api/producao/{pedidoId}/status", consumes = "application/json")
     public void atualizarStatusPedidoProducao(@PathVariable String pedidoId, @RequestBody PedidoStatusRequest producaoRequest);
 }
 
