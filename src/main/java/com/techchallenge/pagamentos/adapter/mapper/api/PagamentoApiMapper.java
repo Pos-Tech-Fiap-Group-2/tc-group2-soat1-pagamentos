@@ -32,4 +32,8 @@ public class PagamentoApiMapper {
     public EventoPagamento toDomainObject(EventoPagamentoInput input) {
         return mapper.map(input, EventoPagamento.class);
     }
+
+    public String toPagamentoStatus(Pagamento pedido) {
+        return mapper.map(pedido, PagamentoModel.class).getStatus();
+    }
 }
