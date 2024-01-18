@@ -1,6 +1,5 @@
 package com.techchallenge.pagamentos.adapter.driver.model.input;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class EventoPagamentoInput {
 
