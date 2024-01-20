@@ -122,7 +122,7 @@ public class ProducaoApiMapperTest {
 
         EventoPagamento eventoPagamento = new EventoPagamento();
         EventoPagamento.Data eventoPagamentoData = new EventoPagamento.Data();
-        data.setId(123L);
+        eventoPagamentoData.setId(123L);
         eventoPagamento.setData(eventoPagamentoData);
 
         when(modelMapper.map(input, EventoPagamento.class)).thenReturn(eventoPagamento);
