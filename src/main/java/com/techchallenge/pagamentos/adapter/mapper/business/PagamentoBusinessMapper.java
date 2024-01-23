@@ -11,6 +11,7 @@ public class PagamentoBusinessMapper {
 
     @Autowired
     private ModelMapper mapper;
+
     public Pagamento toModel(PagamentoEntity entity) {
         return mapper.map(entity, Pagamento.class);
     }

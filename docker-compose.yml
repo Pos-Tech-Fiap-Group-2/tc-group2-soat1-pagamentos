@@ -7,7 +7,7 @@ services:
       dockerfile: .docker/Dockerfile
       # Argumento a ser passado para o Dockerfile indicando o nome do artefato para cópia.
       args: 
-        JAR_FILE: tech-challenge-group2-soat1.jar
+        JAR_FILE: tc-challenge-group2-soat1-pagamentos.jar
     # Adicionei como se fosse um "healthcheck". Se trata de um script que fica pingando o serviço e 
     # "prende" o start do container até que tenha uma resposta dentro do tempo parametrizado. 
     # Caso contrário, retorna um signal code de erro e o container encerra a execução.
@@ -41,6 +41,46 @@ services:
       - "3306:3306"
     networks:
       - tech-challenge-network
+
+  sonarqube:
+    image: sonarqube:community
+    hostname: sonarqube
+    container_name: sonarqube
+    environment:
+      SONAR_JDBC_URL: "jdbc:postgresql://sonarqube-db:5432/sonar"
+      SONAR_JDBC_USERNAME: sonar
+      SONAR_JDBC_PASSWORD: sonar
+    volumes:
+      - sonarqube_data:/opt/sonarqube/data
+      - sonarqube_extensions:/opt/sonarqube/extensions
+      - sonarqube_logs:/opt/sonarqube/logs
+    ports:
+      - "9000:9000"
+    networks:
+      - tech-challenge-network
+    depends_on:
+      - sonarqube-db
+
+  sonarqube-db:
+    image: postgres:13
+    hostname: postgresql
+    container_name: sonarqube-db
+    environment:
+      POSTGRES_USER: sonar
+      POSTGRES_PASSWORD: sonar
+      POSTGRES_DB: sonar
+    volumes:
+      - postgresql:/var/lib/postgresql
+      - postgresql_data:/var/lib/postgresql/data
+    networks:
+      - tech-challenge-network
+
+volumes:
+  sonarqube_data:
+  sonarqube_extensions:
+  sonarqube_logs:
+  postgresql:
+  postgresql_data:
 
 networks:
     tech-challenge-network:

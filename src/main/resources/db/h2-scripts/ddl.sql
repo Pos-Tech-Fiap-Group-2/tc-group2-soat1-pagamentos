@@ -23,6 +23,15 @@ CREATE TABLE IF NOT EXISTS `pagamento` (
 
 -- Exportação de dados foi desmarcado.
 
+-- Copiando estrutura para tabela tech_challenge.tipo_pagamento
+CREATE TABLE IF NOT EXISTS `tipo_pagamento` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `nome` varchar(255) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb3;
+
+-- Exportação de dados foi desmarcado.
+
 /*!40103 SET TIME_ZONE=IFNULL(@OLD_TIME_ZONE, 'system') */;
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
 /*!40014 SET FOREIGN_KEY_CHECKS=IFNULL(@OLD_FOREIGN_KEY_CHECKS, 1) */;

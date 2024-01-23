@@ -8,6 +8,7 @@ public class Pagamento {
 	private Long pedidoId;
 	private BigDecimal valor;
 	private Cliente cliente;
+	private String status;
 
 	public Long getTipoPagamentoId() {
 		return tipoPagamentoId;
@@ -40,4 +41,8 @@ public class Pagamento {
 	public void setCliente(Cliente cliente) {
 		this.cliente = cliente;
 	}
+
+	public String getStatus() { return status; }
+
+	public void setStatus(String status) { this.status = status; }
 }

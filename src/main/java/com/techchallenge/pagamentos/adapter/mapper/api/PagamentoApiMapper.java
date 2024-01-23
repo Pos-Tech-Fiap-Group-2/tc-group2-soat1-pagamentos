@@ -33,7 +33,7 @@ public class PagamentoApiMapper {
         return mapper.map(input, EventoPagamento.class);
     }
 
-    public String toPagamentoStatus(Pagamento pedido) {
-        return mapper.map(pedido, PagamentoModel.class).getStatus();
+    public String toPagamentoStatus(Pagamento pagamento) {
+        return mapper.map(pagamento, PagamentoModel.class).getStatus();
     }
 }

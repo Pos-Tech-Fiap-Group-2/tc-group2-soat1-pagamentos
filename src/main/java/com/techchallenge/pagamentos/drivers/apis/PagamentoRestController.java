@@ -61,7 +61,7 @@ public class PagamentoRestController {
 
 	@ApiOperation("Consultar status do pagamento")
 	@ApiResponses({
-			@ApiResponse(code = 201, message = "Consulta efetuada com sucesso"),
+			@ApiResponse(code = 200, message = "Consulta efetuada com sucesso"),
 			@ApiResponse(code = 404, message = "Caso não exista registros na plataforma")
 	})
 	@GetMapping("/status/pedidos/{pedidoId}")

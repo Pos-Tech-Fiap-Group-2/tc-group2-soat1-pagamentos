@@ -1,0 +1,10 @@
+{
+  "pedidoId":  1,
+  "valor":  10,
+  "tipoPagamentoId":  1,
+  "cliente":  {
+    "nome":  "Teste",
+    "cpf":  123456789,
+    "email":  "teste@teste.com"
+  }
+}
