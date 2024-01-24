@@ -5,6 +5,7 @@ import com.techchallenge.pagamentos.adapter.dto.pagamentos.PagamentoPixDTO;
 import com.techchallenge.pagamentos.adapter.dto.pagamentos.PagamentoPixResponseDTO;
 import com.techchallenge.pagamentos.adapter.dto.pagamentos.PagamentoResponseDTO;
 import com.techchallenge.pagamentos.adapter.external.mercadopago.MercadoPagoAPI;
+import com.techchallenge.pagamentos.adapter.external.producao.PedidoStatusRequest;
 import com.techchallenge.pagamentos.adapter.external.producao.ProducaoAPI;
 import com.techchallenge.pagamentos.adapter.gateways.impl.PagamentoGatewayImpl;
 import com.techchallenge.pagamentos.adapter.mapper.business.PagamentoBusinessMapper;
@@ -13,10 +14,12 @@ import com.techchallenge.pagamentos.core.domain.entities.Cliente;
 import com.techchallenge.pagamentos.core.domain.entities.Pagamento;
 import com.techchallenge.pagamentos.core.domain.entities.StatusPagamento;
 import com.techchallenge.pagamentos.core.domain.entities.TipoPagamento;
+import com.techchallenge.pagamentos.core.domain.exception.EntidadeNaoEncontradaException;
 import com.techchallenge.pagamentos.drivers.db.entities.PagamentoEntity;
 import com.techchallenge.pagamentos.drivers.db.entities.TipoPagamentoEntity;
 import com.techchallenge.pagamentos.drivers.db.repositories.PagamentoRepository;
 import com.techchallenge.pagamentos.drivers.db.repositories.TipoPagamentoRepository;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -30,11 +33,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @SpringBootTest
 @TestPropertySource(locations = "classpath:application-test.properties")
@@ -107,6 +108,28 @@ public class PagamentoGatewayImplTest {
     }
 
     @Test
+    void dadoUmTipoDePagamentoQueNaoExisteEntaoefetuarPagamentoDeveRetornarException() {
+        Cliente cliente = new Cliente();
+        cliente.setCpf(123456789L);
+        cliente.setNome("Teste");
+        cliente.setEmail("teste@teste.com");
+
+        Pagamento pagamento = new Pagamento();
+        pagamento.setTipoPagamentoId(3L);
+        pagamento.setValor(BigDecimal.valueOf(10));
+        pagamento.setPedidoId(123L);
+        pagamento.setCliente(cliente);
+
+        when(tipoPagamentoRepository.findById(3L)).thenReturn(Optional.empty());
+
+        EntidadeNaoEncontradaException exception = assertThrows(EntidadeNaoEncontradaException.class, () -> {
+            pagamentoGateway.efetuarPagamento(pagamento);
+        });
+
+        assertEquals(String.format("Não existe um cadastro de tipo de pagamento com código %d", 3), exception.getMessage());
+    }
+
+    @Test
     void dadoUmPagamentoAprovadoQuandoConsultarPagamentoDeveRetornarPagamento() {
         TipoPagamentoEntity tipoPagamentoEntity = new TipoPagamentoEntity();
         tipoPagamentoEntity.setId(1L);
@@ -119,18 +142,20 @@ public class PagamentoGatewayImplTest {
         pagamentoEntity.setValor(BigDecimal.valueOf(10));
         pagamentoEntity.setTipoPagamento(tipoPagamentoEntity);
 
-        PagamentoResponseDTO pagamentoResponseDTO = new PagamentoResponseDTO(123L, "Approved", "detalhes", "Pix");
+        PagamentoResponseDTO pagamentoResponseDTO = new PagamentoResponseDTO(123L, "approved", "detalhes", "Pix");
 
         when(pagamentoRepository.findByIdPagamentoExterno(any())).thenReturn(pagamentoEntity);
         when(mercadoPagoAPI.consultarPagamento(any())).thenReturn(pagamentoResponseDTO);
         when(pagamentoRepository.save(pagamentoEntity)).thenReturn(pagamentoEntity);
-        doNothing().when(producaoAPI).adicionarPedidoFilaProducao("123L");
+        doNothing().when(producaoAPI).adicionarPedidoFilaProducao("123");
 
         PagamentoResponseDTO resultado = pagamentoGateway.consultarPagamento(123L);
 
         assertNotNull(resultado);
         assertEquals(pagamentoResponseDTO.getId(), resultado.getId());
-        assertEquals(pagamentoResponseDTO.getStatus(), resultado.getStatus());
+        assertEquals("approved", resultado.getStatus());
+        verify(pagamentoRepository).save(pagamentoEntity);
+        verify(producaoAPI).adicionarPedidoFilaProducao("123");
     }
 
     @Test
@@ -158,6 +183,8 @@ public class PagamentoGatewayImplTest {
         assertNotNull(resultado);
         assertEquals(pagamentoResponseDTO.getId(), resultado.getId());
         assertEquals(pagamentoResponseDTO.getStatus(), resultado.getStatus());
+        verify(pagamentoRepository).save(pagamentoEntity);
+        verify(producaoAPI).atualizarStatusPedidoProducao(any(), any());
     }
 
     @Test

@@ -162,23 +162,8 @@ public final class Problem {
 		return type;
 	}
 
-	public String getTitle() {
-		return title;
-	}
-
-	public String getDetail() {
-		return detail;
-	}
-
-	public String getUserMessage() {
-		return userMessage;
-	}
-
 	public OffsetDateTime getTimestamp() {
 		return timestamp;
 	}
 
-	public List<Object> getObjects() {
-		return objects;
-	}
 }

@@ -1,7 +1,5 @@
-package com.techchallenge.pagamentos.adapter.external;
+package com.techchallenge.pagamentos.adapter.external.producao;
 
-import com.techchallenge.pagamentos.adapter.external.producao.PedidoStatusRequest;
-import com.techchallenge.pagamentos.adapter.external.producao.ProducaoAPI;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
