@@ -35,13 +35,12 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
 import java.util.List;
 import java.util.Locale;
@@ -187,4 +186,30 @@ public class PagamentoRestControllerTest {
                 .andExpect(jsonPath("$").value("APROVADO"));
     }
 
+
+    @Test
+    void dadoStatus_quandoConsultarComMediaTypeIncorreto_entaoStatus400() throws Exception {
+        mockMvc.perform(put("/pagamentos/status/pedidos/123").contentType(MediaType.APPLICATION_XML).content(""))
+                .andExpect(status().is4xxClientError());
+    }
+
+    @Test
+    void dadoIdDoPedido_quandoConsultarStatus_entaoStatus500() throws Exception {
+        when(controller.consultarStatusPagamento(1L))
+                .thenThrow(new RuntimeException("Erro inesperado"));
+
+        mockMvc.perform(get("/pagamentos/status/pedidos/1")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().is5xxServerError());
+    }
+
+    @Test
+    void dadoPedido_quandoEfetuarPagamentoComRequestIncorreto_entaoStatus400() throws Exception {
+
+        String content = ResourceUtil.getContentFromResource(
+                "/json/incorreto/pagamento-input-sem-valor.json");
+
+        mockMvc.perform(post("/pagamentos").contentType(MediaType.APPLICATION_JSON).content(content))
+                .andExpect(status().is4xxClientError());
+    }
 }

@@ -28,8 +28,10 @@
 			**/entities/*,
 			**/model/*,
 			**/input/*,
-			**/TechChallengePagamentosApplication.java,
-			**/ValidacaoException.java
+			**/com/techchallenge/pagamentos/adapter/dto/**/*,
+			**/com/techchallenge/pagamentos/TechChallengePagamentosApplication.java,
+			src/main/java/com/techchallenge/pagamentos/TechChallengePagamentosApplication.java,
+			**/com/techchallenge/pagamentos/adapter/driver/exceptionhandler/ValidacaoException.java
 	    </sonar.exclusions>
 	</properties>
 
