@@ -1,0 +1,6 @@
+{
+  "id": 123,
+  "status": "Approved",
+  "detalhes": "Details",
+  "tipo": "PaymentType"
+}

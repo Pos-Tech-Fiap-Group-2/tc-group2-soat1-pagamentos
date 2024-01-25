@@ -212,4 +212,5 @@ public class PagamentoRestControllerTest {
         mockMvc.perform(post("/pagamentos").contentType(MediaType.APPLICATION_JSON).content(content))
                 .andExpect(status().is4xxClientError());
     }
+
 }
