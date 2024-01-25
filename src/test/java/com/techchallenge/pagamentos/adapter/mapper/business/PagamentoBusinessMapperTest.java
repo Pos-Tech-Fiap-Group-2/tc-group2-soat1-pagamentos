@@ -5,7 +5,6 @@ import com.techchallenge.pagamentos.core.domain.entities.Pagamento;
 import com.techchallenge.pagamentos.core.domain.entities.StatusPagamento;
 import com.techchallenge.pagamentos.drivers.db.entities.PagamentoEntity;
 import com.techchallenge.pagamentos.drivers.db.entities.TipoPagamentoEntity;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -17,6 +16,7 @@ import org.springframework.test.context.TestPropertySource;
 
 import java.math.BigDecimal;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
@@ -73,6 +73,6 @@ public class PagamentoBusinessMapperTest {
         Pagamento pagamento = createPagamento();
 
         when(modelMapper.map(entity, Pagamento.class)).thenReturn(pagamento);
-        Assertions.assertNotNull(mapper.toModel(entity));
+        assertNotNull(mapper.toModel(entity));
     }
 }
