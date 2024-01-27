@@ -2,7 +2,7 @@ name: Java CI with Maven
 
 on:
   push:
-    branches: [ "feature/github-actions" ]
+    branches: [ "feature/github-actions", "main" ]
   pull_request:
     branches: [ "main" ]
 env:
@@ -30,9 +30,34 @@ jobs:
           ${{ runner.os }}-ms
     - name: Build and Test Project
       run: mvn -B package --file pom.xml
+      
+  sonar-cloud:
+    needs: [tests]
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up JDK 17
+      uses: actions/setup-java@v3
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        cache: maven
+        
+    - name: Cache the Maven
+      uses: actions/cache@v2
+      with:
+        path: ~/.m2
+        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+        restore-keys: |
+          ${{ runner.os }}-ms
+    - name: Run Sonar Cloud to quality gate
+      env:
+        SONAR_TOKEN: ${{secrets.SONAR_TOKEN}}
+      run: mvn clean verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar
 
   build:
-    needs: [tests]
+    needs: [sonar-cloud]
     runs-on: ubuntu-latest
 
     steps:
@@ -67,23 +92,23 @@ jobs:
         aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
         aws-region: ${{ env.aws-region }}
 
-    - name: Login to Amazon ECR
-      id: login-ecr
-      uses: aws-actions/amazon-ecr-login@v1
+#    - name: Login to Amazon ECR
+#      id: login-ecr
+#      uses: aws-actions/amazon-ecr-login@v1
 
-    - name: Build, tag, and push image to Amazon ECR
-      id: build-image
-      env:
-        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        ECR_REPOSITORY: tech-challenge-ecr
-        IMAGE_TAG: ${{ github.sha }}
-      run: |
+#    - name: Build, tag, and push image to Amazon ECR
+#      id: build-image
+#      env:
+#        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+#        ECR_REPOSITORY: tech-challenge-ecr
+#        IMAGE_TAG: ${{ github.sha }}
+#      run: |
         # Build a docker container and
         # push it to ECR so that it can
         # be deployed to ECS.
-        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
-        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-        echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
+#        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+#        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+#        echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
 
     # - name: Fill in the new image ID in the Amazon ECS task definition
     #   id: task-def
