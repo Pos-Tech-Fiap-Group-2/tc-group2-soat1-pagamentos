@@ -10,7 +10,6 @@ Funcionalidade: API - Pagamentos
     Então os tipos de pagamentos são exibidos com sucesso
 
   Cenário: Confirmação de status do pagamento
-    Dado um evento de pagamento aprovado ou recusado
     Quando receber evento de pagamento aprovado ou recusado
     Então deve confirmar pagamento
 

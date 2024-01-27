@@ -1,7 +1,7 @@
 package com.techchallenge.pagamentos.bdd;
 
 import com.techchallenge.pagamentos.util.ResourceUtil;
-import io.cucumber.java.pt.Dado;
+import io.cucumber.java.pt.Entao;
 import io.cucumber.java.pt.Então;
 import io.cucumber.java.pt.Quando;
 import io.restassured.response.Response;
@@ -16,9 +16,9 @@ import static io.restassured.RestAssured.given;
 
 public class PagamentosBDDPassos {
 
-    private Response response;
+    public Response response;
 
-    private static String ENDPOINT_PAGAMENTOS;
+    public static String ENDPOINT_PAGAMENTOS;
 
     static {
         Properties prop = new Properties();
@@ -33,7 +33,7 @@ public class PagamentosBDDPassos {
         }
     }
 
-    @Quando("Realizar pagamento")
+    @Quando("realizar pagamento")
     public void realizarPagamento() {
         String content = ResourceUtil.getContentFromResource(
                 "/json/correto/pagamento-input.json");
@@ -44,9 +44,9 @@ public class PagamentosBDDPassos {
                 .post(ENDPOINT_PAGAMENTOS);
     }
 
-    @Então("o pagamento é efetuado com sucesso")
+    @Entao("o pagamento é efetuado com sucesso")
     public void pagamentoEfetuadoComSucesso() {
-        response.then().statusCode(HttpStatus.CREATED.value());
+        response.then().statusCode(HttpStatus.OK.value());
     }
 
     @Quando("solicitar registros de tipos de pagamentos na plataforma")
@@ -62,18 +62,14 @@ public class PagamentosBDDPassos {
         response.then().statusCode(HttpStatus.OK.value());
     }
 
-    @Dado("um evento de pagamento aprovado ou recusado")
-    public void eventoPagamentoAprovadoOuRecusado() {
+    @Quando("receber evento de pagamento aprovado ou recusado")
+    public void receberEventoPagamento() {
         String content = ResourceUtil.getContentFromResource(
                 "/json/correto/evento-pagamento-input.json");
-        receberEventoPagamento(content);
-    }
 
-    @Quando("receber evento de pagamento aprovado ou recusado")
-    public void receberEventoPagamento(String input) {
         response = given()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .body(input)
+                .body(content)
                 .when()
                 .post(ENDPOINT_PAGAMENTOS);
     }

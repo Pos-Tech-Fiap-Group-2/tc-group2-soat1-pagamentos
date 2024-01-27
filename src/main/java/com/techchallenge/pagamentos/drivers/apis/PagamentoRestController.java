@@ -28,7 +28,7 @@ public class PagamentoRestController {
     
 	@ApiOperation("Efetuar pagamento do pedido na plataforma")
 	@ApiResponses({ 
-			@ApiResponse(code = 201, message = "Pagamento registrado com sucesso"),
+			@ApiResponse(code = 200, message = "Pagamento registrado com sucesso"),
 			@ApiResponse(code = 404, message = "Caso o pedido ou pagamento com o ID informado não exista")
 			})
 	@PostMapping
