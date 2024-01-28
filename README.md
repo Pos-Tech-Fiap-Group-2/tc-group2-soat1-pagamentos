@@ -1,8 +1,8 @@
 # Documentação - Tech Challenge - Grupo 2 SOAT1 - PosTech - Arquitetura de Software - FIAP
-Repositório para o microserviço e Pagamentos do desafio do Tech Challenge da Pós-gradução em Software Architecture pela FIAP.
+Repositório para o microsserviço de pagamentos do desafio do Tech Challenge da Pós-gradução em Software Architecture pela FIAP.
 
 ## Introdução
-Uma lanchonete de barrio que está expandido sua operação devido seu grande sucesso. Porém, com a expansão e sem um sistema de controle de pedidos, o atendimento aos clientes pode ser caótico e confuso.
+Uma lanchonete de bairro que está expandido sua operação devido seu grande sucesso. Porém, com a expansão e sem um sistema de controle de pedidos, o atendimento aos clientes pode ser caótico e confuso.
 Para solucionar o problema, a lanchonete irá investir em um sistema de autoatendimento de fast food, que é composto por uma série de dispositivos e interfaces que permitem aos clientes selecionar e fazer pedidos sem precisar interagir com um atendente.
 
 ## Membros do Grupo 2
@@ -31,64 +31,29 @@ Navegue até o diretório raiz do projeto no terminal e execute o seguinte coman
 mvn clean install
 ```
 
-Isso irá baixar as dependências do projeto, compilar o código-fonte e criar o artefato no diretório target com o nome **tech-challenge-group2-soat1.jar**.<br/>
+Isso irá baixar as dependências do projeto, compilar o código-fonte e criar o artefato no diretório target com o nome **tc-group2-soat1-pagamentos.jar**.<br/>
 Esse artefato será copiado para a imagem do container em momento de build durante a execução do docker-compose.
 
 **Executando o projeto:**<br/>
 Após a conclusão da etapa anterior, você pode executar o projeto seguindo as instruções específicas do projeto.
-
-# Imagem padrão do projeto
-Para a imagem do microserviço, o arquivo yaml de deployment já possui uma imagem configurada na qual reflete a última versão da imagem no Docker Registry. Portanto, toda a configuração informada abaixo relacionada aos recursos provisionados no k8s sempre serão referenciadas a essa imagem.
-Caso haja necessidade de gerar outra imagem para testes, basta alterar a referência d registry no arquivo **09-deployment.yaml**.
 
 # Build da imagem do projeto
 Caso seja necessária a geração de uma nova imagem, executar o comando no diretório raíz do projeto:
 ```sh
 docker build --build-arg "JAR_FILE=tech-challenge-group2-soat1-pagamentos.jar" -t <usuario>/<imagem_nome>:<tag> .
 ```
-Após geração da imagem, alterar o arquivo **09-deployment.yaml** indicando o novo tagueamento da imagem.
-
-# Recursos provisionados no k8s
-Lista de arquivos YAML com recursos do k8s:
-- **00-secrets.yaml:** Armazenamento das secrets de banco de dados e access_token para a API do MP;
-- **01-persistent-volume-db.yaml:** Mapeamento da PV para os arquivos de banco de dados;
-- **02-persistent-volume-claim.yaml:** Mapeamento da PVC com configuração de claims para volumes do banco de dados;
-- **03-configmap.yaml:** ConfigMap com chaves relacionadas a integração do microserviço;
-- **04-configmap-db.yaml:** ConfigMap com chaves relacionadas a integração do banco de dados;
-- **05-service-db.yaml:** Mapeamento das portas para acesso ao service de banco de dados;
-- **06-service-lb.yaml:** Mapeamento das portas para acesso ao service LoadBalancer do microserviço;
-- **07-service-np.yaml:** Mapeamento das portar para acesso ao service NodePort do microserviço;
-- **08-deployment-db.yaml:** Deployment para disponibilização do banco de dados;
-- **09-deployment.yaml:** Deployment para disponibilização do microserviço;
-- **10-autoscale.yaml:** HPA com parametrização de quantidade de réplicas e indicador para escalabilidade.
-
-**Importante!**
-Os arquivos devem ser aplicados ao k8s na ordem que estão mapeados.
-
-Após provisionamento dos recursos, a aplicação estará disponível no endereço associado a NAT configurada no ambiente provido do k8s. O contexto da aplicação está definida como **/api**.
-
-Após o provisionamento dos recursos, será necessário realizar uma carga de dados iniciais na base, executando o seguinte comando:
-
-```sh
-kubectl exec -i tech-challenge-group2-db-deployment-<hash> -- mysql -u root -proot  < .docker/seeds/load-data.sql
-```
-**Observação:** Substituir *&lt;hash&gt;* pelo hash associado ao pod provisionado pelo deployment.
-
-**Importante!**
-- Esse comando é necessário ser executado apenas no primeiro provisionamento dos recursos.
-- Após a primeira inicialização, os volumes relacionados aos dados do MySQL estarão persistidos.
-- Somente será necessária a execução novamente se houver a remoção do **persistent volume** gerado durante o provisionamento declarado no arquivo **01-persistent-volume-db.yaml**.
 
 ## Documentação Swagger da API
 A documentação em padrão Swagger está disponível em http://localhost:8080/api/swagger-ui.html.
 
 ## Execução do projeto via Postman
-Basta clicar no link [diretório postman](src/main/resources/postman) onde está disponível o arquivo JSON contendo todos os endpoints configurados basta importa-lo via Postman e executar o passo-a-passo abaixo.
+Basta clicar no link [diretório postman](src/main/resources/postman) onde está disponível o arquivo JSON contendo todos os endpoints configurados basta importá-lo via Postman e executar o passo-a-passo abaixo.
 
 <a name="ancora"></a>
-1. [Listar tipos de pagamento](#ancora6)
-2. [Efetuar pagamento](#ancora7)
-3. [Webhook de notificação de eventos relacionados ao meio de pagamento](#ancora8)
+1. [Listar tipos de pagamento](#ancora1)
+2. [Consultar pagamento MP](#ancora2)
+3. [Gerar pagamento](#ancora3)
+4. [Confirmar pagamento](#ancora4)
 
 ## Informações adicionais
 Algumas informações adicionais sobre a construção da API
@@ -123,33 +88,40 @@ Foram criados dois profiles springboot para execução da API, sendo eles:
 
 # Endpoints disponíveis
 
-<a id="ancora6"></a>
+<a id="ancora1"></a>
 ##### Listar tipos de pagamento
 ```sh
 GET http://localhost:8080/api/pagamentos/tipos-pagamento
 ```
 
-<a id="ancora6"></a>
+<a id="ancora2"></a>
 ##### Consultar status do pagamento de um pedido
 ```sh
-GET http://localhost:8080/api/pagamentos/status/pedidos/1
+GET http://localhost:8080/api/pagamentos/status/pagamentos/1/pedidos/1
 ```
 
-<a id="ancora7"></a>
-##### Efetuar pagamento de um pedido
+<a id="ancora3"></a>
+##### Gerar pagamento de um pedido
 ```sh
-PUT http://localhost:8080/api/pagamentos/pedidos/1
+POST http://localhost:8080/api/pagamentos
 
 Request body
 {
-    "pagamentoId": 1
+  "tipoPagamentoId":  1,
+  "pedidoId":  1,
+  "valor":  "25.99",
+  "cliente":  {
+    "nome":  "Nome Teste",
+    "email":  "email-teste@teste.com.br",
+    "cpf":  68127322067
+  }
 }
 ```
 Nesse momento será gerado o QR Code para pagamento do pedido via PIX.
 O QR Code será gerado através da integração com a API do Mercado Pago e será retornado no payload da resposta da requisição. A partir desse ponto, as alterações ocorridas no status do pagamento originadas pelo Mercado Pago serão notificadas para o webhook configurado no projeto.
 
-<a id="ancora8"></a>
-##### Webhook de notificação de eventos relacionados ao meio de pagamento
+<a id="ancora4"></a>
+##### Confirmar pagamento
 
 Esse webhook para recebimento de eventos relacionados a mudança de estado do pagamento pelo Mercado Pago. Através do id do pagamento é realizada uma consulta na API do Mercado Pago para detalhe do status do método de pagamento e posterior atualização do status do pedido.
 
