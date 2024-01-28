@@ -106,16 +106,17 @@ public class PagamentoUseCaseTest {
     @Test
     void dadoUmPedidoIdQuandoConsultarStatusPagamentoEntaoDeveRetornarStatusPagamento() {
         Long pedidoId = 1L;
+        Long pagamentoId = 1L;
         Pagamento pagamento = new Pagamento();
         pagamento.setTipoPagamentoId(1L);
         pagamento.setValor(BigDecimal.valueOf(10));
         pagamento.setPedidoId(pedidoId);
 
-        when(pagamentoGateway.consultarStatusPagamento(anyLong())).thenReturn(pagamento);
+        when(pagamentoGateway.consultarStatusPagamento(anyLong(),  anyLong())).thenReturn(pagamento);
 
-        Pagamento resultado = pagamentoUseCase.consultaStatusPagamento(pedidoId);
+        Pagamento resultado = pagamentoUseCase.consultaStatusPagamento(pagamentoId, pedidoId);
 
-        verify(pagamentoGateway).consultarStatusPagamento(pedidoId);
+        verify(pagamentoGateway).consultarStatusPagamento(pagamentoId, pedidoId);
 
         assertNotNull(resultado);
         assertEquals(pagamento.getTipoPagamentoId(), resultado.getTipoPagamentoId());

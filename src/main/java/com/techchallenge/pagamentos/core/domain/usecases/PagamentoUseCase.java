@@ -29,7 +29,7 @@ public class PagamentoUseCase {
 		return gateway.listar();
 	}
 
-	public Pagamento consultaStatusPagamento(Long pedidoId) {
-		return gateway.consultarStatusPagamento(pedidoId);
+	public Pagamento consultaStatusPagamento(Long pagamentoId, Long pedidoId) {
+		return gateway.consultarStatusPagamento(pagamentoId, pedidoId);
 	}
 }

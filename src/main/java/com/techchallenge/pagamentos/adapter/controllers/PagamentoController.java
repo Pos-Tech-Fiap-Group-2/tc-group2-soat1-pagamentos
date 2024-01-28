@@ -49,8 +49,8 @@ public class PagamentoController {
 		mercadoPagoApiMapper.toDomainObject(useCase.consultarPagamento(paymentId));
 	}
 
-	public String consultarStatusPagamento(Long pedidoId) {
-		return mapper.toPagamentoStatus(useCase.consultaStatusPagamento(pedidoId));
+	public String consultarStatusPagamento(Long pagamentoId, Long pedidoId) {
+		return mapper.toPagamentoStatus(useCase.consultaStatusPagamento(pagamentoId, pedidoId));
 	}
 
 }

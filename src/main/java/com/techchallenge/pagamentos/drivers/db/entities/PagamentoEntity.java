@@ -1,6 +1,7 @@
 package com.techchallenge.pagamentos.drivers.db.entities;
 
 import java.math.BigDecimal;
+import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -85,4 +86,21 @@ public class PagamentoEntity {
     public Long getIdPagamentoExterno() { return idPagamentoExterno; }
 
     public void setIdPagamentoExterno(Long idPagamentoExterno) { this.idPagamentoExterno = idPagamentoExterno; }
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(idPagamento, idPedido);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		PagamentoEntity other = (PagamentoEntity) obj;
+		return Objects.equals(idPagamento, other.idPagamento) && Objects.equals(idPedido, other.idPedido);
+	}
 }

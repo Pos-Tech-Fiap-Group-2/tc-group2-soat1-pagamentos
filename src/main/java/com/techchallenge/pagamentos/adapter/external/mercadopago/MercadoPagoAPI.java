@@ -38,12 +38,12 @@ public class MercadoPagoAPI {
                             .notificationUrl(mercadoPagoNotificationUrl)
                             .payer(
                                     PaymentPayerRequest.builder()
-//                                            .email(pagamentoPixDTO.getCliente().getEmail())
-//                                            .firstName(pagamentoPixDTO.getCliente().getNome())
+                                            .email(pagamentoPixDTO.getCliente().getEmail())
+                                            .firstName(pagamentoPixDTO.getCliente().getNome())
                                             .identification(
                                                     IdentificationRequest.builder()
-//                                                            .type(pagamentoPixDTO.getCliente().getDocumento().getTipo())
-//                                                            .number(pagamentoPixDTO.getCliente().getDocumento().getNumero())
+                                                            .type(pagamentoPixDTO.getCliente().getDocumento().getTipo())
+                                                            .number(pagamentoPixDTO.getCliente().getDocumento().getNumero())
                                                             .build()
                                             )
                                             .build()

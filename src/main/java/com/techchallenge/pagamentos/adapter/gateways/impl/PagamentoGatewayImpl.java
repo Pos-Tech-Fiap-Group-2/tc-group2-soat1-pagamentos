@@ -21,6 +21,7 @@ import com.techchallenge.pagamentos.core.domain.entities.StatusPagamento;
 import com.techchallenge.pagamentos.core.domain.entities.TipoPagamento;
 import com.techchallenge.pagamentos.core.domain.exception.EntidadeNaoEncontradaException;
 import com.techchallenge.pagamentos.drivers.db.entities.PagamentoEntity;
+import com.techchallenge.pagamentos.drivers.db.entities.PagamentoPKEntity;
 import com.techchallenge.pagamentos.drivers.db.entities.TipoPagamentoEntity;
 import com.techchallenge.pagamentos.drivers.db.repositories.PagamentoRepository;
 import com.techchallenge.pagamentos.drivers.db.repositories.TipoPagamentoRepository;
@@ -55,7 +56,7 @@ public class PagamentoGatewayImpl implements PagamentoGateway {
 		pagamentoEntity.setIdPedido(pagamento.getPedidoId());
 		pagamentoEntity.setValor(pagamento.getValor());
 
-		pagamentoRepository.save(pagamentoEntity);
+		PagamentoEntity saved = pagamentoRepository.save(pagamentoEntity);
 
 		ClienteDocumentoDTO clienteDocumentoDTO = new ClienteDocumentoDTO();
 		clienteDocumentoDTO.setTipo("CPF");
@@ -72,6 +73,7 @@ public class PagamentoGatewayImpl implements PagamentoGateway {
 		pagamentoPixDTO.setDescricao("Pagamento do pedido " + pagamento.getPedidoId());
 
 		PagamentoPixResponseDTO pagamentoPixResponseDTO = mercadoPagoAPI.efetuarPagamentoViaPix(pagamentoPixDTO);
+		pagamentoPixResponseDTO.setIdPagamento(saved.getIdPagamento());
 		pagamentoEntity.setIdPagamentoExterno(pagamentoPixResponseDTO.getId());
 		pagamentoRepository.save(pagamentoEntity);
 
@@ -91,6 +93,7 @@ public class PagamentoGatewayImpl implements PagamentoGateway {
 			pagamentoRepository.save(pagamentoEntity);
 			PedidoStatusRequest request = new PedidoStatusRequest();
 			request.setStatus("CANCELADO");
+			request.setPedidoId(pagamentoEntity.getIdPedido());
 			producaoAPI.atualizarStatusPedidoProducao(pagamentoEntity.getIdPedido().toString(), request);
 		}
 
@@ -101,8 +104,12 @@ public class PagamentoGatewayImpl implements PagamentoGateway {
 		return businessMapper.toCollectionModel(tipoPagamentoRepository.findAll());
 	}
 
-	public Pagamento consultarStatusPagamento(Long pedidoId) {
-		PagamentoEntity entity = pagamentoRepository.findByIdPedido(pedidoId);
+	public Pagamento consultarStatusPagamento(Long pagamentoId, Long pedidoId) {
+		PagamentoPKEntity pk = new PagamentoPKEntity();
+		pk.setIdPagamento(pagamentoId);
+		pk.setIdPedido(pedidoId);
+		
+		PagamentoEntity entity = pagamentoRepository.findById(pk).get();
 		return pagamentoBusinessMapper.toModel(entity);
 
 	}

@@ -16,6 +16,7 @@ import com.techchallenge.pagamentos.core.domain.entities.StatusPagamento;
 import com.techchallenge.pagamentos.core.domain.entities.TipoPagamento;
 import com.techchallenge.pagamentos.core.domain.exception.EntidadeNaoEncontradaException;
 import com.techchallenge.pagamentos.drivers.db.entities.PagamentoEntity;
+import com.techchallenge.pagamentos.drivers.db.entities.PagamentoPKEntity;
 import com.techchallenge.pagamentos.drivers.db.entities.TipoPagamentoEntity;
 import com.techchallenge.pagamentos.drivers.db.repositories.PagamentoRepository;
 import com.techchallenge.pagamentos.drivers.db.repositories.TipoPagamentoRepository;
@@ -90,12 +91,22 @@ public class PagamentoGatewayImplTest {
         pagamentoEntity.setStatus(StatusPagamento.APROVADO);
         pagamentoEntity.setValor(BigDecimal.valueOf(10));
         pagamentoEntity.setTipoPagamento(tipoPagamentoEntity);
+        
+        PagamentoEntity saved = new PagamentoEntity();
+        saved.setIdPedido(123L);
+        saved.setIdPagamentoExterno(123456L);
+        saved.setStatus(StatusPagamento.APROVADO);
+        saved.setValor(BigDecimal.valueOf(10));
+        saved.setTipoPagamento(tipoPagamentoEntity);
+        saved.setIdPagamento(1L);
 
         PagamentoPixResponseDTO pagamentoPixResponseDTO = new PagamentoPixResponseDTO(123L, "Approved", "Detalhes",
                 "Pix", "qrCodeBase64", "qrCode");
+        
+        pagamentoPixResponseDTO.setIdPagamento(1L);
 
         when(tipoPagamentoRepository.findById(1L)).thenReturn(Optional.of(tipoPagamentoEntity));
-        when(pagamentoRepository.save(pagamentoEntity)).thenReturn(pagamentoEntity);
+        when(pagamentoRepository.save(pagamentoEntity)).thenReturn(saved);
         when(mercadoPagoAPI.efetuarPagamentoViaPix(any(PagamentoPixDTO.class))).thenReturn(pagamentoPixResponseDTO);
 
         PagamentoPixResponseDTO resultado = pagamentoGateway.efetuarPagamento(pagamento);
@@ -250,11 +261,14 @@ public class PagamentoGatewayImplTest {
         pagamentoEntity.setStatus(StatusPagamento.APROVADO);
         pagamentoEntity.setValor(BigDecimal.valueOf(10));
         pagamentoEntity.setTipoPagamento(tipoPagamentoEntity);
+        
+        PagamentoPKEntity pk = new PagamentoPKEntity();
+        pk.setIdPagamento(1L);
+        pk.setIdPedido(123L);
 
-
-        when(pagamentoRepository.findByIdPedido(1L)).thenReturn(pagamentoEntity);
+        when(pagamentoRepository.findById(pk)).thenReturn(Optional.of(pagamentoEntity));
         when(pagamentoBusinessMapper.toModel(pagamentoEntity)).thenReturn(pagamento);
-        Pagamento resultado = pagamentoGateway.consultarStatusPagamento(1L);
+        Pagamento resultado = pagamentoGateway.consultarStatusPagamento(1L, 123L);
 
         assertNotNull(resultado);
         assertEquals(pagamento.getStatus(), resultado.getStatus());

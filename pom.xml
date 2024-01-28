@@ -30,8 +30,8 @@
             **/input/*,
             **/com/techchallenge/pagamentos/adapter/dto/**/*,
             **/com/techchallenge/pagamentos/TechChallengePagamentosApplication.java,
-            **/com/techchallenge/pagamentos/adapter/external/mercadopago/MercadoPagoAPI.java,
-            src/main/java/com/techchallenge/pagamentos/TechChallengePagamentosApplication.java,
+            **/com/techchallenge/pagamentos/adapter/external/mercadopago/**,
+            **/com/techchallenge/pagamentos/TechChallengePagamentosApplication.java,
             **/com/techchallenge/pagamentos/adapter/driver/exceptionhandler/ValidacaoException.java
         </sonar.exclusions>
     </properties>
@@ -305,8 +305,8 @@
                         <exclude>com/techchallenge/pagamentos/drivers/db/entities/*</exclude>
                         <exclude>com/techchallenge/pagamentos/adapter/driver/model/*</exclude>
                         <exclude>com/techchallenge/pagamentos/adapter/driver/model/input/*</exclude>
-                        <exclude>com/techchallenge/pagamentos/adapter/dto/*</exclude>
-                        <exclude>com/techchallenge/pagamentos/adapter/external/mercadopago/MercadoPagoAPI.java</exclude>
+                        <exclude>**/adapter/dto/**</exclude>
+                        <exclude>**/mercadopago/MercadoPagoAPI.java</exclude>
                         <exclude>com/techchallenge/pagamentos/TechChallengePagamentosApplication*</exclude>
                     </excludes>
                 </configuration>
