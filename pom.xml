@@ -1,18 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
-    <parent>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.3.3.RELEASE</version>
-        <relativePath/> <!-- lookup parent from repository -->
-    </parent>
-    <artifactId>tc-challenge-group2-soat1-pagamentos</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
-    <name>tc-challenge-group2-soat1-pagamentos</name>
-    <description>Projeto Pós Software Architecture</description>
-
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>2.3.3.RELEASE</version>
+		<relativePath/> <!-- lookup parent from repository -->
+	</parent>
+	<groupId>com.tech-challenge</groupId>
+	<artifactId>tc-challenge-group2-soat1-pagamentos</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<name>tc-challenge-group2-soat1-pagamentos</name>
+	<description>Projeto Pós Software Architecture</description>
+	
     <properties>
         <java.version>11</java.version>
         <spring-fox.version>2.9.2</spring-fox.version>
@@ -22,6 +23,9 @@
         <sonar.coverage.jacoco.xmlReportPaths>${project.basedir}/../target/site/jacoco-aggregate/jacoco.xml
         </sonar.coverage.jacoco.xmlReportPaths>
         <sonar.language>java</sonar.language>
+		<sonar.organization>tech-challenge-goup2-soat1-local</sonar.organization>
+		<sonar.host.url>https://sonarcloud.io</sonar.host.url>
+		<sonar.projectKey>tech-challenge-goup2-soat1-local_tc-group2-soat1-pagamentos</sonar.projectKey>
         <sonar.exclusions>
             **/entities/*,
             **/exception/*,

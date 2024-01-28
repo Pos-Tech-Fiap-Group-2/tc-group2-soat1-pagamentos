@@ -109,7 +109,7 @@ public class PagamentoGatewayImpl implements PagamentoGateway {
 		pk.setIdPagamento(pagamentoId);
 		pk.setIdPedido(pedidoId);
 		
-		PagamentoEntity entity = pagamentoRepository.findById(pk).get();
+		PagamentoEntity entity = pagamentoRepository.findById(pk).orElseThrow();
 		return pagamentoBusinessMapper.toModel(entity);
 
 	}
