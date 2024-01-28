@@ -28,7 +28,7 @@ public class PagamentoRestController {
     
 	@ApiOperation("Efetuar pagamento do pedido na plataforma")
 	@ApiResponses({ 
-			@ApiResponse(code = 201, message = "Pagamento registrado com sucesso"),
+			@ApiResponse(code = 200, message = "Pagamento registrado com sucesso"),
 			@ApiResponse(code = 404, message = "Caso o pedido ou pagamento com o ID informado não exista")
 			})
 	@PostMapping
@@ -64,9 +64,9 @@ public class PagamentoRestController {
 			@ApiResponse(code = 200, message = "Consulta efetuada com sucesso"),
 			@ApiResponse(code = 404, message = "Caso não exista registros na plataforma")
 	})
-	@GetMapping("/status/pedidos/{pedidoId}")
+	@GetMapping("/status/pagamentos/{pagamentoId}/pedidos/{pedidoId}")
 	@ResponseStatus(HttpStatus.OK)
-	public String consultarStatusPagamento(@PathVariable Long pedidoId) {
-		return controller.consultarStatusPagamento(pedidoId);
+	public String consultarStatusPagamento(@PathVariable Long pagamentoId, @PathVariable Long pedidoId) {
+		return controller.consultarStatusPagamento(pagamentoId, pedidoId);
 	}
 }

@@ -57,36 +57,11 @@ public class PagamentoRestControllerTest {
     @Mock
     PagamentoController controller;
 
-    private ApiExceptionHandler createHandler() throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
-
-        // Geração de instância de MessageSource mock para injeção no Handler via Reflection API.
-        MessageSource messageSourceTest = new MessageSource() {
-
-            public String getMessage(String code, Object[] args, String defaultMessage, Locale locale) {
-                return String.format("Message mock: Code: %s - DefaultMessage: %s : args %s", new Object[]{code, defaultMessage, args});
-            }
-
-            public String getMessage(String code, Object[] args, Locale locale) throws NoSuchMessageException {
-                return String.format("Message mock: Code: %s : args %s", new Object[]{code, args});
-            }
-
-            public String getMessage(MessageSourceResolvable resolvable, Locale locale) throws NoSuchMessageException {
-                return "Message mock";
-            }
-        };
+    private ApiExceptionHandler createHandler() {
 
         // Como não estamos subindo o contexto do Spring boot, o MessageSource fica com referência nula
         // por estarmos instanciando diretamente o Handler.
         ApiExceptionHandler handler = new ApiExceptionHandler();
-
-        // Injeção da referência do messageSource via reflection API.
-        Class<? extends ApiExceptionHandler> clazz = handler.getClass();
-
-        Field messageSourceField = clazz.getDeclaredField("messageSource");
-        messageSourceField.setAccessible(Boolean.TRUE);
-
-        messageSourceField.set(handler, messageSourceTest);
-
         return handler;
     }
 
@@ -178,9 +153,9 @@ public class PagamentoRestControllerTest {
 
     @Test
     void consultarStatusPagamentoRetorna200() throws Exception {
-        when(controller.consultarStatusPagamento(123L)).thenReturn("APROVADO");
+        when(controller.consultarStatusPagamento(1L, 123L)).thenReturn("APROVADO");
 
-        mockMvc.perform(get("/pagamentos/status/pedidos/123")
+        mockMvc.perform(get("/pagamentos/status/pagamentos/1/pedidos/123")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").value("APROVADO"));
@@ -195,10 +170,10 @@ public class PagamentoRestControllerTest {
 
     @Test
     void dadoIdDoPedido_quandoConsultarStatus_entaoStatus500() throws Exception {
-        when(controller.consultarStatusPagamento(1L))
+        when(controller.consultarStatusPagamento(1L, 1L))
                 .thenThrow(new RuntimeException("Erro inesperado"));
 
-        mockMvc.perform(get("/pagamentos/status/pedidos/1")
+        mockMvc.perform(get("/pagamentos/status/pagamentos/1/pedidos/1")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is5xxServerError());
     }

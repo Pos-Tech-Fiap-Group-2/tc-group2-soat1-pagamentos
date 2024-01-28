@@ -156,6 +156,7 @@ public class PagamentoControllerTest {
 
     @Test
     void consultarStatusPagamento() {
+    	Long pagamentoId = 1L;
         Long pedidoId = 123456L;
         Pagamento pagamento = new Pagamento();
         pagamento.setTipoPagamentoId(1L);
@@ -163,10 +164,10 @@ public class PagamentoControllerTest {
         pagamento.setPedidoId(pedidoId);
         pagamento.setStatus("APROVADO");
 
-        when(useCase.consultaStatusPagamento(pedidoId)).thenReturn(pagamento);
+        when(useCase.consultaStatusPagamento(pagamentoId, pedidoId)).thenReturn(pagamento);
         when(mapper.toPagamentoStatus(pagamento)).thenReturn(pagamento.getStatus());
 
-        String resultado = pagamentoController.consultarStatusPagamento(pedidoId);
+        String resultado = pagamentoController.consultarStatusPagamento(pagamentoId, pedidoId);
 
         verify(mapper).toPagamentoStatus(pagamento);
         assertNotNull(resultado);
