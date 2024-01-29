@@ -1,5 +1,5 @@
 {
-  "taskDefinitionArn": "arn:aws:ecs:us-east-1:818048014896:task-definition/tech-challenge-task:1",
+  "taskDefinitionArn": "arn:aws:ecs:us-east-1:818048014896:task-definition/tech-challenge-pagamentos-task:2",
   "containerDefinitions": [
     {
       "name": "tech-challenge-api-pagamentos",
@@ -7,7 +7,7 @@
       "cpu": 0,
       "portMappings": [
         {
-          "name": "tc-pagamentos",
+          "name": "8080",
           "containerPort": 8080,
           "hostPort": 8080,
           "protocol": "tcp",
@@ -15,7 +15,24 @@
         }
       ],
       "essential": true,
-      "environment": [],
+      "environment": [
+        {
+          "name": "DB_HOST",
+          "value": "tech-challenge-db.cluster-c1ssc6e4s6n7.us-east-1.rds.amazonaws.com:3306"
+        },
+        {
+          "name": "DB_USER",
+          "value": "root"
+        },
+        {
+          "name": "PRODUCAO_API_URL",
+          "value": "http://23.20.48.214:8080"
+        },
+        {
+          "name": "DB_PASSWORD",
+          "value": "roottech"
+        }
+      ],
       "environmentFiles": [],
       "mountPoints": [],
       "volumesFrom": [],
@@ -24,7 +41,7 @@
         "logDriver": "awslogs",
         "options": {
           "awslogs-create-group": "true",
-          "awslogs-group": "/ecs/tech-challenge-task",
+          "awslogs-group": "/ecs/tech-challenge-pagamentos-task",
           "awslogs-region": "us-east-1",
           "awslogs-stream-prefix": "ecs"
         },
@@ -32,11 +49,11 @@
       }
     }
   ],
-  "family": "tech-challenge-task",
+  "family": "tech-challenge-pagamentos-task",
   "taskRoleArn": "arn:aws:iam::818048014896:role/LabRole",
   "executionRoleArn": "arn:aws:iam::818048014896:role/LabRole",
   "networkMode": "awsvpc",
-  "revision": 1,
+  "revision": 2,
   "volumes": [],
   "status": "ACTIVE",
   "requiresAttributes": [
@@ -74,6 +91,7 @@
     "FARGATE"
   ],
   "requiresCompatibilities": [
+    "EC2",
     "FARGATE"
   ],
   "cpu": "1024",
@@ -82,7 +100,12 @@
     "cpuArchitecture": "X86_64",
     "operatingSystemFamily": "LINUX"
   },
-  "registeredAt": "2024-01-27T05:21:49.301Z",
+  "registeredAt": "2024-01-29T23:49:00.268Z",
   "registeredBy": "arn:aws:sts::818048014896:assumed-role/voclabs/user3013614=vinicius.furin@outlook.com",
-  "tags": []
+  "tags": [
+    {
+      "key": "name",
+      "value": "tech-challenge-pagamentos-task"
+    }
+  ]
 }
