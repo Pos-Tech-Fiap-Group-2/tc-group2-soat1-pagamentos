@@ -1,0 +1,111 @@
+{
+  "taskDefinitionArn": "arn:aws:ecs:us-east-1:818048014896:task-definition/tech-challenge-pagamentos-task:2",
+  "containerDefinitions": [
+    {
+      "name": "tech-challenge-api-pagamentos",
+      "image": "818048014896.dkr.ecr.us-east-1.amazonaws.com/tech-challenge-ecr:tc-api-pagamentos",
+      "cpu": 0,
+      "portMappings": [
+        {
+          "name": "8080",
+          "containerPort": 8080,
+          "hostPort": 8080,
+          "protocol": "tcp",
+          "appProtocol": "http"
+        }
+      ],
+      "essential": true,
+      "environment": [
+        {
+          "name": "DB_HOST",
+          "value": "tech-challenge-db.cluster-c1ssc6e4s6n7.us-east-1.rds.amazonaws.com:3306"
+        },
+        {
+          "name": "DB_USER",
+          "value": "root"
+        },
+        {
+          "name": "PRODUCAO_API_URL",
+          "value": "http://23.20.48.214:8080"
+        },
+        {
+          "name": "DB_PASSWORD",
+          "value": "roottech"
+        }
+      ],
+      "environmentFiles": [],
+      "mountPoints": [],
+      "volumesFrom": [],
+      "ulimits": [],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-create-group": "true",
+          "awslogs-group": "/ecs/tech-challenge-pagamentos-task",
+          "awslogs-region": "us-east-1",
+          "awslogs-stream-prefix": "ecs"
+        },
+        "secretOptions": []
+      }
+    }
+  ],
+  "family": "tech-challenge-pagamentos-task",
+  "taskRoleArn": "arn:aws:iam::818048014896:role/LabRole",
+  "executionRoleArn": "arn:aws:iam::818048014896:role/LabRole",
+  "networkMode": "awsvpc",
+  "revision": 2,
+  "volumes": [],
+  "status": "ACTIVE",
+  "requiresAttributes": [
+    {
+      "name": "com.amazonaws.ecs.capability.logging-driver.awslogs"
+    },
+    {
+      "name": "ecs.capability.execution-role-awslogs"
+    },
+    {
+      "name": "com.amazonaws.ecs.capability.ecr-auth"
+    },
+    {
+      "name": "com.amazonaws.ecs.capability.docker-remote-api.1.19"
+    },
+    {
+      "name": "com.amazonaws.ecs.capability.task-iam-role"
+    },
+    {
+      "name": "ecs.capability.execution-role-ecr-pull"
+    },
+    {
+      "name": "com.amazonaws.ecs.capability.docker-remote-api.1.18"
+    },
+    {
+      "name": "ecs.capability.task-eni"
+    },
+    {
+      "name": "com.amazonaws.ecs.capability.docker-remote-api.1.29"
+    }
+  ],
+  "placementConstraints": [],
+  "compatibilities": [
+    "EC2",
+    "FARGATE"
+  ],
+  "requiresCompatibilities": [
+    "EC2",
+    "FARGATE"
+  ],
+  "cpu": "1024",
+  "memory": "3072",
+  "runtimePlatform": {
+    "cpuArchitecture": "X86_64",
+    "operatingSystemFamily": "LINUX"
+  },
+  "registeredAt": "2024-01-29T23:49:00.268Z",
+  "registeredBy": "arn:aws:sts::818048014896:assumed-role/voclabs/user3013614=vinicius.furin@outlook.com",
+  "tags": [
+    {
+      "key": "name",
+      "value": "tech-challenge-pagamentos-task"
+    }
+  ]
+}
