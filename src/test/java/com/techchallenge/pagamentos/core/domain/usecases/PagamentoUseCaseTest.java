@@ -3,6 +3,7 @@ package com.techchallenge.pagamentos.core.domain.usecases;
 import com.techchallenge.pagamentos.adapter.dto.pagamentos.PagamentoPixResponseDTO;
 import com.techchallenge.pagamentos.adapter.dto.pagamentos.PagamentoResponseDTO;
 import com.techchallenge.pagamentos.adapter.gateways.PagamentoGateway;
+import com.techchallenge.pagamentos.core.domain.entities.EventoPagamento;
 import com.techchallenge.pagamentos.core.domain.entities.Pagamento;
 import com.techchallenge.pagamentos.core.domain.entities.TipoPagamento;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,6 +21,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -63,14 +65,18 @@ public class PagamentoUseCaseTest {
 
     @Test
     void dadoUmPedidoIdQuandoConsultarPagamentoEntaoRetornarPagamento() {
-        Long paymentId = 1L;
-        PagamentoResponseDTO respostaEsperada = new PagamentoResponseDTO(123L, "Approved", "detalhes", "Pix");
+        EventoPagamento evento = new EventoPagamento();
+        evento.getData().setId(123L);
+        evento.getData().setPedidoId(1L);
+        
+        PagamentoResponseDTO respostaEsperada = new PagamentoResponseDTO(evento.getData().getId(), "Approved", "detalhes", "Pix");
+        String status = "approved";
 
-        when(pagamentoGateway.consultarPagamento(anyLong())).thenReturn(respostaEsperada);
+        when(pagamentoGateway.consultarPagamento(any(EventoPagamento.class), anyString())).thenReturn(respostaEsperada);
 
-        PagamentoResponseDTO resultado = pagamentoUseCase.consultarPagamento(paymentId);
+        PagamentoResponseDTO resultado = pagamentoUseCase.consultarPagamento(evento, status);
 
-        verify(pagamentoGateway).consultarPagamento(paymentId);
+        verify(pagamentoGateway).consultarPagamento(evento, status);
 
         assertNotNull(resultado);
         assertEquals(respostaEsperada.getId(), resultado.getId());
