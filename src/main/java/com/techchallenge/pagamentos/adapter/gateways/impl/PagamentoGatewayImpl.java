@@ -17,7 +17,6 @@ import com.techchallenge.pagamentos.adapter.external.mercadopago.MercadoPagoAPI;
 import com.techchallenge.pagamentos.adapter.external.payment.PaymentStatus;
 import com.techchallenge.pagamentos.adapter.external.pedido.PedidoAPI;
 import com.techchallenge.pagamentos.adapter.external.producao.PedidoStatusRequest;
-import com.techchallenge.pagamentos.adapter.external.producao.ProducaoAPI;
 import com.techchallenge.pagamentos.adapter.gateways.PagamentoGateway;
 import com.techchallenge.pagamentos.adapter.mapper.business.PagamentoBusinessMapper;
 import com.techchallenge.pagamentos.adapter.mapper.business.TipoPagamentoBusinessMapper;
@@ -34,6 +33,7 @@ import com.techchallenge.pagamentos.drivers.db.entities.TipoPagamentoEntity;
 import com.techchallenge.pagamentos.drivers.db.repositories.PagamentoRepository;
 import com.techchallenge.pagamentos.drivers.db.repositories.TipoPagamentoRepository;
 import com.techchallenge.pagamentos.drivers.producers.cliente.NotificacaoClienteProducer;
+import com.techchallenge.pagamentos.drivers.producers.pagamento.ProducaoPedidoInclusaoProducer;
 
 @Component
 public class PagamentoGatewayImpl implements PagamentoGateway {
@@ -51,9 +51,6 @@ public class PagamentoGatewayImpl implements PagamentoGateway {
 	private MercadoPagoAPI mercadoPagoAPI;
 
 	@Autowired
-	private ProducaoAPI producaoAPI;
-	
-	@Autowired
 	private PedidoAPI pedidoAPI;
 	
 	@Autowired
@@ -61,7 +58,10 @@ public class PagamentoGatewayImpl implements PagamentoGateway {
 	
 	@Autowired
 	private NotificacaoClienteProducer clienteProducer;
-
+	
+	@Autowired
+	private ProducaoPedidoInclusaoProducer pedidoInclusaoProducer;
+	
 	public PagamentoPixResponseDTO efetuarPagamento(Pagamento pagamento) {
 		Long id = pagamento.getTipoPagamentoId();
 
@@ -127,14 +127,12 @@ public class PagamentoGatewayImpl implements PagamentoGateway {
 		pagamentoEntity.setStatus(statusPagamento);
 		pagamentoRepository.save(pagamentoEntity);
 		
-		// Acionamento API de produção.
+		// Gera mensagem para API de produção somente se status do pagamento foi aprovado.
 		if (statusPagamento == StatusPagamento.APROVADO) {
-			producaoAPI.adicionarPedidoFilaProducao(pagamentoEntity.getIdPedido().toString());
-		} else {
 			PedidoStatusRequest request = new PedidoStatusRequest();
-			request.setStatus(statusPagamento.name());
 			request.setPedidoId(pagamentoEntity.getIdPedido());
-			producaoAPI.atualizarStatusPedidoProducao(pagamentoEntity.getIdPedido().toString(), request);
+			
+			pedidoInclusaoProducer.enviar(request);
 		}
 		
 		enviarNotificacaoCliente(pagamentoEntity, pedido, statusPagamento);
