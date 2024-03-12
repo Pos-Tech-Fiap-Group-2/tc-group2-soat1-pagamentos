@@ -55,8 +55,8 @@ public class PagamentoRestController {
 	})
 	@PostMapping("/mercadopago/notifications")
 	@ResponseStatus(HttpStatus.OK)
-	public void confirmarPagamento(@RequestBody EventoPagamentoInput eventoPagamentoInput) {
-		controller.confirmarPagamento(eventoPagamentoInput);
+	public void confirmarPagamento(@RequestBody EventoPagamentoInput eventoPagamentoInput, @RequestHeader("X-mock-status-payment") String paymentStatus) {
+		controller.confirmarPagamento(eventoPagamentoInput, paymentStatus);
 	}
 
 	@ApiOperation("Consultar status do pagamento")

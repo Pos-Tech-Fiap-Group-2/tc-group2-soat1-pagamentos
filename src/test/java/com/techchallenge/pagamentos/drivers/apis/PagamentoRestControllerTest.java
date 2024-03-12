@@ -141,13 +141,15 @@ public class PagamentoRestControllerTest {
         EventoPagamentoInput.Data data = new EventoPagamentoInput.Data();
         data.setId(123L);
         eventoPagamentoInput.setData(data);
+        
+        String status = "approved";
 
-        doNothing().when(controller).confirmarPagamento(eventoPagamentoInput);
+        doNothing().when(controller).confirmarPagamento(eventoPagamentoInput, status);
 
         mockMvc.perform(post("/pagamentos/mercadopago/notifications").contentType(MediaType.APPLICATION_JSON).content(content))
                 .andExpect(status().isOk());
 
-        verify(controller, times(1)).confirmarPagamento(any(EventoPagamentoInput.class));
+        verify(controller, times(1)).confirmarPagamento(any(EventoPagamentoInput.class), any(String.class));
 
     }
 

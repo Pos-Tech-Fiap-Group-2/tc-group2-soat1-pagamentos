@@ -1,16 +1,37 @@
 package com.techchallenge.pagamentos.adapter.gateways;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.TestPropertySource;
+
 import com.techchallenge.pagamentos.adapter.dto.cliente.ClienteDTO;
 import com.techchallenge.pagamentos.adapter.dto.pagamentos.PagamentoPixDTO;
 import com.techchallenge.pagamentos.adapter.dto.pagamentos.PagamentoPixResponseDTO;
 import com.techchallenge.pagamentos.adapter.dto.pagamentos.PagamentoResponseDTO;
 import com.techchallenge.pagamentos.adapter.external.mercadopago.MercadoPagoAPI;
-import com.techchallenge.pagamentos.adapter.external.producao.PedidoStatusRequest;
 import com.techchallenge.pagamentos.adapter.external.producao.ProducaoAPI;
 import com.techchallenge.pagamentos.adapter.gateways.impl.PagamentoGatewayImpl;
 import com.techchallenge.pagamentos.adapter.mapper.business.PagamentoBusinessMapper;
 import com.techchallenge.pagamentos.adapter.mapper.business.TipoPagamentoBusinessMapper;
 import com.techchallenge.pagamentos.core.domain.entities.Cliente;
+import com.techchallenge.pagamentos.core.domain.entities.EventoPagamento;
 import com.techchallenge.pagamentos.core.domain.entities.Pagamento;
 import com.techchallenge.pagamentos.core.domain.entities.StatusPagamento;
 import com.techchallenge.pagamentos.core.domain.entities.TipoPagamento;
@@ -20,23 +41,6 @@ import com.techchallenge.pagamentos.drivers.db.entities.PagamentoPKEntity;
 import com.techchallenge.pagamentos.drivers.db.entities.TipoPagamentoEntity;
 import com.techchallenge.pagamentos.drivers.db.repositories.PagamentoRepository;
 import com.techchallenge.pagamentos.drivers.db.repositories.TipoPagamentoRepository;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.TestPropertySource;
-
-import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
 
 @SpringBootTest
 @TestPropertySource(locations = "classpath:application-test.properties")
@@ -152,15 +156,21 @@ public class PagamentoGatewayImplTest {
         pagamentoEntity.setStatus(StatusPagamento.APROVADO);
         pagamentoEntity.setValor(BigDecimal.valueOf(10));
         pagamentoEntity.setTipoPagamento(tipoPagamentoEntity);
+        
+        String status = "approved";
 
         PagamentoResponseDTO pagamentoResponseDTO = new PagamentoResponseDTO(123L, "approved", "detalhes", "Pix");
+        
+        EventoPagamento evento = new EventoPagamento();
+        evento.getData().setId(123L);
+        evento.getData().setPedidoId(1L);
 
         when(pagamentoRepository.findByIdPagamentoExterno(any())).thenReturn(pagamentoEntity);
         when(mercadoPagoAPI.consultarPagamento(any())).thenReturn(pagamentoResponseDTO);
         when(pagamentoRepository.save(pagamentoEntity)).thenReturn(pagamentoEntity);
-        doNothing().when(producaoAPI).adicionarPedidoFilaProducao("123");
+        doNothing().when(producaoAPI).adicionarPedidoFilaProducao(evento.getData().getId().toString());
 
-        PagamentoResponseDTO resultado = pagamentoGateway.consultarPagamento(123L);
+        PagamentoResponseDTO resultado = pagamentoGateway.consultarPagamento(evento, status);
 
         assertNotNull(resultado);
         assertEquals(pagamentoResponseDTO.getId(), resultado.getId());
@@ -181,15 +191,21 @@ public class PagamentoGatewayImplTest {
         pagamentoEntity.setStatus(StatusPagamento.RECUSADO);
         pagamentoEntity.setValor(BigDecimal.valueOf(10));
         pagamentoEntity.setTipoPagamento(tipoPagamentoEntity);
+        
+        String status = "approved";
+        
+        EventoPagamento evento = new EventoPagamento();
+        evento.getData().setId(123L);
+        evento.getData().setPedidoId(1L);
 
-        PagamentoResponseDTO pagamentoResponseDTO = new PagamentoResponseDTO(123L, "Recusado", "detalhes", "Pix");
+        PagamentoResponseDTO pagamentoResponseDTO = new PagamentoResponseDTO(evento.getData().getId(), "Recusado", "detalhes", "Pix");
 
         when(pagamentoRepository.findByIdPagamentoExterno(any())).thenReturn(pagamentoEntity);
         when(mercadoPagoAPI.consultarPagamento(any())).thenReturn(pagamentoResponseDTO);
         when(pagamentoRepository.save(pagamentoEntity)).thenReturn(pagamentoEntity);
         doNothing().when(producaoAPI).atualizarStatusPedidoProducao(any(), any());
 
-        PagamentoResponseDTO resultado = pagamentoGateway.consultarPagamento(123L);
+        PagamentoResponseDTO resultado = pagamentoGateway.consultarPagamento(evento, status);
 
         assertNotNull(resultado);
         assertEquals(pagamentoResponseDTO.getId(), resultado.getId());

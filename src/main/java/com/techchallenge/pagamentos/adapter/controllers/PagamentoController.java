@@ -42,11 +42,9 @@ public class PagamentoController {
 		return tipoPagamentoApiMapper.toCollectionModel(useCase.listar());
 	}
 
-	public void confirmarPagamento(EventoPagamentoInput eventoPagamentoInput) {
+	public void confirmarPagamento(EventoPagamentoInput eventoPagamentoInput, String paymentStatus) {
 		EventoPagamento eventoPagamento = mapper.toDomainObject(eventoPagamentoInput);
-		Long paymentId = eventoPagamento.getData().getId();
-
-		mercadoPagoApiMapper.toDomainObject(useCase.consultarPagamento(paymentId));
+		mercadoPagoApiMapper.toDomainObject(useCase.consultarPagamento(eventoPagamento, paymentStatus));
 	}
 
 	public String consultarStatusPagamento(Long pagamentoId, Long pedidoId) {

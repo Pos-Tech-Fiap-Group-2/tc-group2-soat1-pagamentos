@@ -130,28 +130,33 @@ public class PagamentoControllerTest {
         EventoPagamentoInput input = new EventoPagamentoInput();
         EventoPagamentoInput.Data data = new EventoPagamentoInput.Data();
         data.setId(123L);
+        data.setPedidoId(1L);
         input.setData(data);
+        
+        String status = "approved";
 
         EventoPagamento eventoPagamento = new EventoPagamento();
         EventoPagamento.Data eventoPagamentoData = new EventoPagamento.Data();
         eventoPagamentoData.setId(123L);
         eventoPagamento.setData(eventoPagamentoData);
 
-        Long paymentId = eventoPagamento.getData().getId();
+        EventoPagamento evento = new EventoPagamento();
+        evento.getData().setId(123L);
+        evento.getData().setPedidoId(1L);
 
-        PagamentoResponseDTO pagamentoResponseDTO = new PagamentoResponseDTO(123L, "Approved", "Detalhes",
+        PagamentoResponseDTO pagamentoResponseDTO = new PagamentoResponseDTO(evento.getData().getId(), "Approved", "Detalhes",
                 "Pix");
 
         when(mapper.toDomainObject(input)).thenReturn(eventoPagamento);
-        when(useCase.consultarPagamento(paymentId)).thenReturn(pagamentoResponseDTO);
+        when(useCase.consultarPagamento(evento, status)).thenReturn(pagamentoResponseDTO);
         when(mercadoPagoApiMapper.toDomainObject(pagamentoResponseDTO)).thenReturn(pagamentoResponseDTO);
 
-        pagamentoController.confirmarPagamento(input);
+        pagamentoController.confirmarPagamento(input, status);
 
         verify(mapper).toDomainObject(input);
-        verify(useCase).consultarPagamento(paymentId);
+        verify(useCase).consultarPagamento(evento, status);
         verify(mercadoPagoApiMapper).toDomainObject(pagamentoResponseDTO);
-        assertDoesNotThrow(() -> pagamentoController.confirmarPagamento(input));
+        assertDoesNotThrow(() -> pagamentoController.confirmarPagamento(input, status));
     }
 
     @Test

@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import com.techchallenge.pagamentos.adapter.dto.pagamentos.PagamentoPixResponseDTO;
 import com.techchallenge.pagamentos.adapter.dto.pagamentos.PagamentoResponseDTO;
 import com.techchallenge.pagamentos.adapter.gateways.PagamentoGateway;
+import com.techchallenge.pagamentos.core.domain.entities.EventoPagamento;
 import com.techchallenge.pagamentos.core.domain.entities.Pagamento;
 import com.techchallenge.pagamentos.core.domain.entities.TipoPagamento;
 
@@ -21,8 +22,8 @@ public class PagamentoUseCase {
 		return gateway.efetuarPagamento(pagamento);
 	}
 	
-	public PagamentoResponseDTO consultarPagamento(Long paymentId) {
-		return gateway.consultarPagamento(paymentId);
+	public PagamentoResponseDTO consultarPagamento(EventoPagamento evento, String paymentStatus) {
+		return gateway.consultarPagamento(evento, paymentStatus);
 	}
 	
 	public List<TipoPagamento> listar() {

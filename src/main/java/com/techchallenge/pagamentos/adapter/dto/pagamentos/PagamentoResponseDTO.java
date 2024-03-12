@@ -29,5 +29,11 @@ public class PagamentoResponseDTO {
 	public String getTipo() {
 		return tipo;
 	}
+
+	@Override
+	public String toString() {
+		return "PagamentoResponseDTO [id=" + id + ", status=" + status + ", detalhes=" + detalhes + ", tipo=" + tipo
+				+ "]";
+	}
     
 }
