@@ -20,7 +20,7 @@ services:
       DB_USER: root
       DB_PASSWORD: root
     ports:
-      - "8090:8080"
+      - "8080:8080"
     networks:
       - tech-challenge-network
     depends_on:
