@@ -1,5 +1,6 @@
 package com.techchallenge.pagamentos.drivers.producers.pagamento;
 
+import org.springframework.amqp.core.Queue;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -11,7 +12,7 @@ import com.techchallenge.pagamentos.drivers.producers.NotificacaoBaseProducer;
 @Component
 public class ProducaoPedidoInclusaoProducer extends NotificacaoBaseProducer<PedidoStatusRequest> {
 
-	@Value("${cloud.aws.queue.name.producao-pedido-inclusao}")
+	@Value("${queue.name.producao-pedido-inclusao}")
 	private String queueName;
 	
 	@Autowired
@@ -19,7 +20,8 @@ public class ProducaoPedidoInclusaoProducer extends NotificacaoBaseProducer<Pedi
 	
 	@Override
 	protected String getQueueName() {
-		return queueName;
+		Queue queue = new Queue(queueName, Boolean.TRUE);
+		return queue.getName();
 	}
 
 	@Override
