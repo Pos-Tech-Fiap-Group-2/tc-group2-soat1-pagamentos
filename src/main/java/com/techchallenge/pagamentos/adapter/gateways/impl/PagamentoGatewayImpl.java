@@ -13,7 +13,6 @@ import com.techchallenge.pagamentos.adapter.dto.pagamentos.PagamentoPixResponseD
 import com.techchallenge.pagamentos.adapter.dto.pagamentos.PagamentoResponseDTO;
 import com.techchallenge.pagamentos.adapter.dto.pagamentos.PaymentDTO;
 import com.techchallenge.pagamentos.adapter.dto.pagamentos.PedidoDTO;
-import com.techchallenge.pagamentos.adapter.external.mercadopago.MercadoPagoAPI;
 import com.techchallenge.pagamentos.adapter.external.payment.PaymentStatus;
 import com.techchallenge.pagamentos.adapter.external.pedido.PedidoAPI;
 import com.techchallenge.pagamentos.adapter.external.producao.PedidoStatusRequest;
@@ -46,9 +45,6 @@ public class PagamentoGatewayImpl implements PagamentoGateway {
 	private TipoPagamentoBusinessMapper businessMapper;
 	@Autowired
 	private PagamentoBusinessMapper pagamentoBusinessMapper;
-
-	@Autowired
-	private MercadoPagoAPI mercadoPagoAPI;
 
 	@Autowired
 	private PedidoAPI pedidoAPI;
