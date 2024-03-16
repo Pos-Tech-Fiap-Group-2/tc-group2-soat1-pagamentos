@@ -1,32 +1,34 @@
 package com.techchallenge.pagamentos.core.domain.usecases;
 
-import com.techchallenge.pagamentos.adapter.dto.pagamentos.PagamentoPixResponseDTO;
-import com.techchallenge.pagamentos.adapter.dto.pagamentos.PagamentoResponseDTO;
-import com.techchallenge.pagamentos.adapter.gateways.PagamentoGateway;
-import com.techchallenge.pagamentos.core.domain.entities.EventoPagamento;
-import com.techchallenge.pagamentos.core.domain.entities.Pagamento;
-import com.techchallenge.pagamentos.core.domain.entities.TipoPagamento;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.TestPropertySource;
-
-import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@SpringBootTest
-@TestPropertySource(locations = "classpath:application-test.properties")
+import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.List;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import com.techchallenge.pagamentos.adapter.dto.pagamentos.PagamentoPixResponseDTO;
+import com.techchallenge.pagamentos.adapter.dto.pagamentos.PagamentoResponseDTO;
+import com.techchallenge.pagamentos.adapter.gateways.PagamentoGateway;
+import com.techchallenge.pagamentos.core.domain.entities.EventoPagamento;
+import com.techchallenge.pagamentos.core.domain.entities.EventoPagamento.Data;
+import com.techchallenge.pagamentos.core.domain.entities.Pagamento;
+import com.techchallenge.pagamentos.core.domain.entities.TipoPagamento;
+
+@RunWith(SpringJUnit4ClassRunner.class)
 public class PagamentoUseCaseTest {
 
     @InjectMocks
@@ -66,11 +68,12 @@ public class PagamentoUseCaseTest {
     @Test
     void dadoUmPedidoIdQuandoConsultarPagamentoEntaoRetornarPagamento() {
         EventoPagamento evento = new EventoPagamento();
+        evento.setData(new Data());
         evento.getData().setId(123L);
         evento.getData().setPedidoId(1L);
         
-        PagamentoResponseDTO respostaEsperada = new PagamentoResponseDTO(evento.getData().getId(), "Approved", "detalhes", "Pix");
         String status = "approved";
+        PagamentoResponseDTO respostaEsperada = new PagamentoResponseDTO(evento.getData().getId(), status, "detalhes", "Pix");
 
         when(pagamentoGateway.consultarPagamento(any(EventoPagamento.class), anyString())).thenReturn(respostaEsperada);
 
