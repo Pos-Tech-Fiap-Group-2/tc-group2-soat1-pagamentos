@@ -39,4 +39,3 @@ DELIMITER ;
 
 -- chamando SPs
 CALL seed_tipo_pagamento();
-CALL seed_categoria();

@@ -145,3 +145,12 @@ Request body
 O tech challenge define que o método de pagamento pelo Mercado Pago seja através de PIX.
 O webhook foi construído com a definição de suportar o recebimento de notificações perante a atualização de status sobre o pagamento gerado no Mercado Pago. Porém, não foi encontrada nenhuma documentação, **a caráter de teste**, que apresentasse uma chamada via API do Mercado Pago na qual simulasse a efetivação do pagamento. Sendo que o pagamento via PIX é necessário ser realizado por mediação de um instituição financeira.
 Portanto, nesse ponto, foi construída a implementação do Webhook com o objetivo de **analisar o estado do pagamento recebido**. Com isso, realizar a atualização do pagamento do pedido dentro do sistema. Por não ter como atualizar de forma mockada esse retorno, esse endpoint sempre manterá o estado do pagamento atual para o pedido.
+
+**OWASP Report**
+
+[Relatório antes da correção da vulnerabilidade](https://github.com/Pos-Tech-Fiap-Group-2/tc-group2-soat1-pagamentos/blob/0160f45c5a07247d9f3b0f2a5e6fb0478a5cfa08/2024-03-13-ZAP-Report-geracao-confirmacao-pagamento-antes.pdf)
+
+
+[Relatório depois da correção da vulnerabilidade](https://github.com/Pos-Tech-Fiap-Group-2/tc-group2-soat1-pagamentos/blob/0160f45c5a07247d9f3b0f2a5e6fb0478a5cfa08/2024-03-15-ZAP-Report-geracao-confirmacao-depois.pdf)
+
+Obs: a vulnerabilidade corrigida tinha risco classificado pelo relatório como baixo.
