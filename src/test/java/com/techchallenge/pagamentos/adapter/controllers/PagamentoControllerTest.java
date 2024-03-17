@@ -1,5 +1,24 @@
 package com.techchallenge.pagamentos.adapter.controllers;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
 import com.techchallenge.pagamentos.adapter.driver.model.TipoPagamentoModel;
 import com.techchallenge.pagamentos.adapter.driver.model.input.ClienteInput;
 import com.techchallenge.pagamentos.adapter.driver.model.input.EventoPagamentoInput;
@@ -10,28 +29,12 @@ import com.techchallenge.pagamentos.adapter.mapper.api.MercadoPagoApiMapper;
 import com.techchallenge.pagamentos.adapter.mapper.api.PagamentoApiMapper;
 import com.techchallenge.pagamentos.adapter.mapper.api.TipoPagamentoApiMapper;
 import com.techchallenge.pagamentos.core.domain.entities.EventoPagamento;
+import com.techchallenge.pagamentos.core.domain.entities.EventoPagamento.Data;
 import com.techchallenge.pagamentos.core.domain.entities.Pagamento;
 import com.techchallenge.pagamentos.core.domain.entities.TipoPagamento;
 import com.techchallenge.pagamentos.core.domain.usecases.PagamentoUseCase;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.TestPropertySource;
 
-import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-@SpringBootTest
-@TestPropertySource(locations = "classpath:application-test.properties")
+@RunWith(SpringJUnit4ClassRunner.class)
 public class PagamentoControllerTest {
 
     @InjectMocks
@@ -135,19 +138,15 @@ public class PagamentoControllerTest {
         
         String status = "approved";
 
-        EventoPagamento eventoPagamento = new EventoPagamento();
-        EventoPagamento.Data eventoPagamentoData = new EventoPagamento.Data();
-        eventoPagamentoData.setId(123L);
-        eventoPagamento.setData(eventoPagamentoData);
-
         EventoPagamento evento = new EventoPagamento();
+        evento.setData(new Data());
         evento.getData().setId(123L);
         evento.getData().setPedidoId(1L);
 
-        PagamentoResponseDTO pagamentoResponseDTO = new PagamentoResponseDTO(evento.getData().getId(), "Approved", "Detalhes",
+        PagamentoResponseDTO pagamentoResponseDTO = new PagamentoResponseDTO(evento.getData().getId(), status, "Detalhes",
                 "Pix");
 
-        when(mapper.toDomainObject(input)).thenReturn(eventoPagamento);
+        when(mapper.toDomainObject(input)).thenReturn(evento);
         when(useCase.consultarPagamento(evento, status)).thenReturn(pagamentoResponseDTO);
         when(mercadoPagoApiMapper.toDomainObject(pagamentoResponseDTO)).thenReturn(pagamentoResponseDTO);
 
